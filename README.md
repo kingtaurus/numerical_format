@@ -58,14 +58,14 @@ paper is kept (unless *we* **[PDG]** feel it inappropriate).
 ### Symmetric Rounding
 
 The basic rule:
-  - **|central value|** > **|error|**; then the precision on the *error* is two significant
+  - **|central value|** > **|error|**; then the precision on the **error** is two significant
 digits, the precision on the central value matches that of the error.
-  - **|central value|** < **|error|**; then the precision on the *central value* is two
+  - **|central value|** < **|error|**; then the precision on the **central value** is two
 significant digits, the precision on the error matches that of the central
 value.
 
-The precision is two significant digits on the *lesser significant value* and the
-other value has precision that matches that of the *lesser significant value*.
+The precision is two significant digits on the **lesser significant value** and the
+other value has precision that matches that of the **lesser significant value**.
 
 For example,
   - `0.827 ± 0.119`  &rarr;  `0.83  ± 0.12`
@@ -98,10 +98,15 @@ or
 0.0059
 ```
 ### Latex Aligning
-Use Terminal Aligning, but then replaces ' ' with '~'; then encapsulates the
+Uses Terminal Aligning, but then replaces ' ' with '~'; then encapsulates the
 entire string within ```\ensuremath{}```.
 
-
+### TODO LIST
+  - Can use `+/-`, `±`
+  - Better Example
+  - Latex Aligning
+  - Terminal Aligning
+  - Changing locale breaks tests (because imbuing a gloabl locale changes number formatting)
 
 Example Usage
 -------------
