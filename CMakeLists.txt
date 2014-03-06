@@ -13,13 +13,13 @@ ENABLE_TESTING()
 
 SET(BUILD_SHARED_LIBS ON)
 
-SET (CMAKE_C_FLAGS                "-g3 -O1 -Wall -W")
+SET (CMAKE_C_FLAGS                "-g3 -O0 -Wall -W --coverags")
 SET (CMAKE_C_FLAGS_DEBUG          "-O0 -g3 --coverage")
 SET (CMAKE_C_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
 SET (CMAKE_C_FLAGS_RELEASE        "-O4 -DNDEBUG")
 SET (CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g2")
 
-SET (CMAKE_CXX_FLAGS              "-g3 -O1 --std=c++11  -Wall -W -Wshadow -Wunused-variable -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers -Wno-deprecated -Woverloaded-virtual -Wwrite-strings")
+SET (CMAKE_CXX_FLAGS              "-g3 -O0 --std=c++11  -Wall -W -Wshadow -Wunused-variable -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers -Wno-deprecated -Woverloaded-virtual -Wwrite-strings --coverage")
 SET (CMAKE_CXX_FLAGS_DEBUG          "-O0 -g3 --coverage")
 SET (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
 SET (CMAKE_CXX_FLAGS_RELEASE        "-O4 -DNDEBUG")
