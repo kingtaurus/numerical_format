@@ -22,45 +22,45 @@ Dependencies
 About
 -----
 
-PDG rounding
-------------
+### PDG rounding
+
 
 The basic rule:
-If the three highest order digits of the error lie between 100 and 354
-  round to two significant digits. (a)
-If the three highest order digits of the error lie between 355 and 949
-  round to one significant digit.  (b)
-If the three highest order digits of the error lie between 950 and 999
-  round up to 1000 and keep two significant digits. (c)
+
+  a. If the three highest order digits of the error lie between 100 and 354
+  round to two significant digits.
+  
+  b. If the three highest order digits of the error lie between 355 and 949
+  round to one significant digit.
+  
+  c.If the three highest order digits of the error lie between 950 and 999
+  round up to 1000 and keep two significant digits.
 
 In all cases the central value is given with a precision that matches that of
 the error.
 
-For example, the result coming from an average, is
+####For example,
+####**|central value|   <   |error|**
+  - `0.827 ± 0.119`  &rarr; `0.83 ± 0.12`
+  - `0.827 ± 0.367`  &rarr; `0.8  ± 0.4`
+  - `1.827 ± 0.967`  &rarr; `1.8  ± 1.0`
 
-*|Principal Value| > |Error|*
-0.827 ± 0.119  |----> 0.83 ± 0.12  - Rounding based upon rule (a);
-0.827 ± 0.367  |----> 0.8  ± 0.4   - Rounding based upon rule (b);
-1.827 ± 0.967  |----> 1.8  ± 1.0   - Rounding based upon rule (c);
-
-*|Principal Value| < |Error|*
-0.0119 ± 0.122 |----> 0.01 ± 0.12  - Rounding based upon rule (a);
-0.0119 ± 0.827 |----> 0.0  ± 0.8   - Rounding based upon rule (b);
-0.0367 ± 0.977 |----> 0.0  ± 1.0   - Rounding based upon rule (c);
+####**|central value|   <   |error|**
+  - `0.0119 ± 0.122` &rarr; `0.01 ± 0.12`
+  - `0.0119 ± 0.827` &rarr; `0.0  ± 0.8`
+  - `0.0367 ± 0.977` &rarr; `0.0  ± 1.0`
 
 Rounding is not performed if a result comes from a single measurement (without
 any averaging). In that case, the number of digits published in the original
-paper is kept (unless *we [PDG]* feel it inappropriate).
+paper is kept (unless *we* **[PDG]** feel it inappropriate).
 
 
-Symmetric Rounding
-------------------
+### Symmetric Rounding
 
 The basic rule:
-If *|central value| > |error|*; then the precision on the error is two significant
+  - **|central value|** > **|error|**; then the precision on the *error* is two significant
 digits, the precision on the central value matches that of the error.
-
-If *|central value| < |error|*; then the precision on the central value is two
+  - **|central value|** < **|error|**; then the precision on the *central value* is two
 significant digits, the precision on the error matches that of the central
 value.
 
@@ -68,39 +68,38 @@ The precision is two significant digits on the *lesser significant value* and th
 other value has precision that matches that of the *lesser significant value*.
 
 For example,
-0.827 ± 0.119  |----> 0.83  ± 0.12
-0.827 ± 0.367  |----> 0.83  ± 0.37
-0.827 ± 0.0119 |----> 0.827 ± 0.012
-0.827 ± 0.0367 |----> 0.827 ± 0.037
+  - `0.827 ± 0.119`  &rarr;  `0.83  ± 0.12`
+  - `0.827 ± 0.367`  &rarr;  `0.83  ± 0.37`
+  - `0.827 ± 0.0119` &rarr;  `0.827 ± 0.012`
+  - `0.827 ± 0.0367` &rarr;  `0.827 ± 0.037`
+  - `0.0119 ± 0.827` &rarr;  `0.012 ± 0.827`
+  - `0.0367 ± 0.827` &rarr;  `0.037 ± 0.827`
 
-0.0119 ± 0.827 |----> 0.012 ± 0.827
-0.0367 ± 0.827 |----> 0.037 ± 0.827
-
-Terminal Aligning
------------------
+### Terminal Aligning
 
 The basic rule:
-If given *n* (`n >= 1`) decimal values; say x_1,...,x_n; these values can be
-decimal point aligned. NOTE: currently using precision of 2 when the |x_i| >
-1.0 (for any i); NOTE: precision is fixed to be 1 more than the
-*least signficant* (|x_i| < `1.0`for some i) - in other words if one of the
-value is in the range (-1,1);
+If given `n` (`n >= 1`) decimal values; say `x_1,...,x_n`; these values can be
+decimal point aligned. 
+#### NOTES:
+- currently using precision of 2 when the `|x_i| >1.0` **for any** `i`; 
+- precision is fixed to be 1 more than the *least signficant* (`|xi| < 1.0` **for some** `i`)
+ - in other words if one of the value is in the range (-1,1);
 
 For example,
+```
 1459.210
    2.110
   -0.020
-
+```
 or
-
+```
 0.0125
 0.0022
 0.0059
-
-Latex Aligning
---------------
+```
+### Latex Aligning
 Use Terminal Aligning, but then replaces ' ' with '~'; then encapsulates the
-entire string within \\ensuremath{}.
+entire string within ```\ensuremath{}```.
 
 
 
