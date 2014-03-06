@@ -41,9 +41,13 @@ message("** RELEASE               : * ${CMAKE_CXX_FLAGS_RELEASE} *")
 message("** RELWITHDEBINFO        : * ${CMAKE_CXX_FLAGS_RELWITHDEBINFO} *")
 
 configure_file (
-  "${PROJECT_SOURCE_DIR}/config.h.in"
+  "${PROJECT_SOURCE_DIR}/inc/config.h.in"
   "${PROJECT_BINARY_DIR}/config.h"
   )
+#configure_file (
+#  "${PROJECT_SOURCE_DIR}/inc/config.h.in"
+#  "${PROJECT_SOURCE_DIR}/inc/config.h"
+#  )
 
 include_directories(
   "${PROJECT_SOURCE_DIR}"
