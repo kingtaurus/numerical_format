@@ -78,11 +78,11 @@ For example,
 ### Terminal Aligning
 
 The basic rule:
-If given `n` (`n >= 1`) decimal values; say `x_1,...,x_n`; these values can be
+If given *n* (*n &ge; 1*) decimal values; say *x*&#x2081;,...,*x*&#x2099; these values can be
 decimal point aligned. 
 #### NOTES:
-- currently using precision of 2 when the `|x_i| >1.0` **for any** `i`; 
-- precision is fixed to be 1 more than the *least signficant* (`|xi| < 1.0` **for some** `i`)
+- currently using precision of 2 when (&#x2200; **l** | *x*&#x2097; > 1.0);
+- precision is fixed to be 1 more than the *least signficant* (&#x2203; **l** | *x*&#x2097; < 1.0 )
  - in other words if one of the value is in the range (-1,1);
 
 For example,
