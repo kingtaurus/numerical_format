@@ -33,6 +33,27 @@ add_library( error_helper_def_static      SHARED error_helper_def.cpp)
 
 add_library( pdg SHARED pdg_error type stream_output_proxy error_helper_def)
 
+SET(CPACK_GENERATOR "DEB")
+SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Greg King") #required
+
+install(
+     TARGETS pdg
+     LIBRARY DESTINATION lib/numeric_error_format
+     COMPONENT pdg
+)
+install(
+     TARGETS pdg_error
+     LIBRARY DESTINATION lib/numeric_error_format
+     COMPONENT pdg
+)
+
+
+INCLUDE(CPack)
+#make package
+#ls _CPack_Packages/Linux/DEB/libnumeric_error_format-0.1.1-Linux/usr/lib/numeric_error_format/
+
+
+
 #add_library(HEADER_ONLY_TARGET STATIC test1.hpp test2.hpp)
 #set_target_properties(HEADER_ONLY_TARGET PROPERTIES LINKER_LANGUAGE CXX)
 
