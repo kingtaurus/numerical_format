@@ -6,7 +6,7 @@
 #include <memory>
 #include <cxxabi.h>
 
-std::string type(const char* name)
+std::string to_string_type(const char* name)
 {
   int status = -999;
   std::unique_ptr<char, void(*)(void*)> res(abi::__cxa_demangle(name, nullptr, nullptr, &status),
@@ -16,8 +16,7 @@ std::string type(const char* name)
 }
 
 #else
-
-std::string type(const char * name)
+std::string to_string_type(const char * name)
 {
   return name;
 }

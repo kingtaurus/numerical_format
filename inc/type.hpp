@@ -5,12 +5,13 @@
 #include <typeinfo>
 
 //forward declaration
-std::string type(const char* name);
+std::string to_string_type(const char* name);
 
 template <typename T>
 std::string type(const T& t)
 {
-  return type(typeid(t).name());
+  return to_string_type(typeid(t).name());
 }
+
 
 #endif
