@@ -55,12 +55,15 @@ add_library( symmetric-static STATIC symmetric_error.cpp type.cpp stream_output_
 SET_TARGET_PROPERTIES( symmetric-static PROPERTIES OUTPUT_NAME "symmetric")
 SET_TARGET_PROPERTIES( symmetric-static PROPERTIES PREFIX      "lib")
 
+SET(CPACK_STRIP_FILES "")
+set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+
 SET(CPACK_GENERATOR "DEB")
 #SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")#this doesn't seem to add the LICENSE to debian
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Greg King <greg.james.king@gmail.com>") #required
 SET(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/kingtaurus/numerical_format")
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY 
-"Numerical Error Format.\n Provides pdg and symmetric formatting of a central value and its associated\n error. Further numerical output can be formatted using latex or terminal\n decoration.")
+"Numerical Error Format.\n Provides pdg and symmetric formatting of a central value and its associated\n error. Further numerical output can be formatted using LaTeX or terminal\n decoration.")
 SET(CPACK_PACKAGE_VERSION_MAJOR "${${PROJECT_NAME}_VERSION_MAJOR}")
 SET(CPACK_PACKAGE_VERSION_MINOR "${${PROJECT_NAME}_VERSION_MINOR}")
 SET(CPACK_PACKAGE_VERSION_PATCH "0")
@@ -77,8 +80,6 @@ SET(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
 SET(CPACK_DEBIAN_PACKAGE_SECTION "libdevel")
 #SET(CPACK_COMPONENTS_ALL Libraries ApplicationData)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>=  2.17), libgcc1 (>= 1:3.4.2-12), libboost-program-options (>= 1.40.0)")
-SET(CPACK_STRIP_FILES "1")
-
 #lintian -i on the deb created:
 #missing changelog
 #missing LICENSE
