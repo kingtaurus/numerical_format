@@ -8,6 +8,7 @@ Dependencies
 * Boost (test, math, system, lexical_cast, multiprecision)
 * cmake
 * ccache (Optional - only if you want to build using it)
+* libmpfr-dev
 
 A stable version of `clang++` is available [llvm-apt](http://llvm.org/apt);
 
