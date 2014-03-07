@@ -4,9 +4,46 @@ C++ Header Library Designed for formatting number +/- error;
 
 Dependencies
 ------------
-* C++11
+* C++11 (either clang++ or g++)
 * Boost (test, math, system, lexical_cast, multiprecision)
 * cmake
+* ccache (Optional - only if you want to build using it)
+
+A stable version of `clang++` is available [llvm-apt](http://llvm.org/apt);
+
+
+Building
+--------
+To build the library,
+
+`mkdir build`
+
+`cd build`
+
+Then run of the following commands:
+  - `CC="gcc" CXX="g++" cmake ../ -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=None`
+  - `CC="ccache gcc" CXX="ccache g++" cmake ../ -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=None`
+  - `CC="ccache clang" CXX="ccache clang++" cmake ../ -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=None`
+
+`None` **can be replaced with one the following:** `Debug, Release, RelWithDebInfo, MinSizeRel, Coverage;`
+
+`make all && make test` **will build and run the unit tests;**
+
+Code Coverage
+-------------
+#### Requires 
+* lcov
+* gcov
+* genhtml
+* gcovr
+
+#### Generate a coverage report:
+`make all && make test && make all_coverage`    **Use None, Debug, or Coverage build modes;**
+
+`<browser> results/index.html` **view the coverage report;**
+
+
+
 
 <!--Boost-specific details:-->
 <!--    ./bootstrap --prefix=$HOME/boost-->
@@ -107,6 +144,8 @@ entire string within ```\ensuremath{}```.
   - Latex Aligning
   - Terminal Aligning
   - Changing locale breaks tests (because imbuing a gloabl locale changes number formatting)
+  - Added an executable: `format_error --pdg central_value error`; `format_error --pdg --latex central_value error`; `format_error --simple central_value error_1 error_2`; `format_error --utf ...`; `format_error --latex --name=...`
+  - Add additional tests;
 
 Example Usage
 -------------
