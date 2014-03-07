@@ -67,7 +67,8 @@ SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY
 SET(CPACK_PACKAGE_VERSION_MAJOR "${${PROJECT_NAME}_VERSION_MAJOR}")
 SET(CPACK_PACKAGE_VERSION_MINOR "${${PROJECT_NAME}_VERSION_MINOR}")
 SET(CPACK_PACKAGE_VERSION_PATCH "0")
-SET(CPACK_SYSTEM_NAME "i386")
+execute_process(COMMAND "dpkg --print-architecture" OUTPUT_VARIABLE DPKG_ARCH)
+SET(CPACK_SYSTEM_NAME ${DPKG_ARCH})
 SET(CPACK_PACKAGE_NAME "libnumeric-error-format")
 
 #cpack --help-variable-list
@@ -79,7 +80,9 @@ SET(CPACK_PACKAGE_NAME "libnumeric-error-format")
 SET(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
 SET(CPACK_DEBIAN_PACKAGE_SECTION "libdevel")
 #SET(CPACK_COMPONENTS_ALL Libraries ApplicationData)
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>=  2.17), libgcc1 (>= 1:3.4.2-12), libboost-program-options (>= 1.40.0)")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>=  2.17), libstdc++-4.8-dev (>= 4.8.1), linux-libc-dev (>= 3.11.0), libgcc1 (>= 1:4.8.0), libboost1.54-all-dev(>= 1.54.0), libmpfr-dev (>= 3.0.0), libgmp-dev (>= 2:5.1.1)")
+
+
 #lintian -i on the deb created:
 #missing changelog
 #missing LICENSE

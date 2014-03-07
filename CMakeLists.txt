@@ -6,13 +6,27 @@ set (${PROJECT_NAME}_VERSION_MAJOR 0)
 set (${PROJECT_NAME}_VERSION_MINOR 1)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
+#if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+#  # using Clang
+#elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+#  # using GCC
+#elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
+#  # using Intel C++
+#elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+#  # using Visual Studio C++
+#endif()
+
 ENABLE_TESTING()
 
 include(CodeCoverage)
 
 #cmake -DCMAKE_BUILD_TYPE=Debug ../ -G "Unix Makefiles"
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
+find_package(Boost 1.54 COMPONENTS system filesystem unit_test_framework REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS})
 
-find_package(Boost COMPONENTS system filesystem unit_test_framework REQUIRED)
 ENABLE_TESTING()
 
 SET(BUILD_SHARED_LIBS ON)

@@ -26,6 +26,11 @@ add_executable(symmetric_error_checks  symmetric_error_checks.cpp)
 set_target_properties(symmetric_error_checks PROPERTIES COMPILE_DEFINITIONS "STAND_ALONE")
 target_link_libraries(symmetric_error_checks gcov ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} error_helper_def symmetric_error )
 
+#${Boost_LIBRARIES}
+#${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_REGEX_LIBRARY}
+#add_definitions( -DBOOST_ALL_NO_LIB )
+#add_definitions( -DBOOST_ALL_DYN_LINK )
+
 add_executable(all_checks all_tests.cpp template_checks.cpp macro_checks.cpp truncate_and_round_checks.cpp to_fixed_string_checks.cpp to_exponent_checks.cpp symmetric_error_checks.cpp)
 target_link_libraries(all_checks gcov ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} mpfr gmp error_helper_def symmetric_error type)
 
