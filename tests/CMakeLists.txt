@@ -1,8 +1,4 @@
 
-ENABLE_TESTING()
-
-include(BoostTestTargets)
-include(CodeCoverage)
 
 setup_target_for_coverage(all_coverage all_checks results)
 
@@ -30,6 +26,8 @@ add_executable(symmetric_error_checks  symmetric_error_checks.cpp)
 set_target_properties(symmetric_error_checks PROPERTIES COMPILE_DEFINITIONS "STAND_ALONE")
 target_link_libraries(symmetric_error_checks gcov ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} error_helper_def symmetric_error )
 
+add_executable(all_checks all_tests.cpp template_checks.cpp macro_checks.cpp truncate_and_round_checks.cpp to_fixed_string_checks.cpp to_exponent_checks.cpp symmetric_error_checks.cpp)
+target_link_libraries(all_checks gcov ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} mpfr gmp error_helper_def symmetric_error type)
 
 add_test(NAME template_test          COMMAND template_checks        --show_progress=yes --log_level=all)
 add_test(NAME macro_tests            COMMAND macro_checks           --show_progress=yes --log_level=all)
@@ -38,9 +36,6 @@ add_test(NAME to_fixed_tests         COMMAND to_fixed_checks        --show_progr
 add_test(NAME to_exponent_tests      COMMAND to_exponent_checks     --show_progress=yes --log_level=all)
 add_test(NAME symmetric_error_tests  COMMAND symmetric_error_checks --show_progress=yes --log_level=all)
 add_test(NAME all_tests              COMMAND all_checks             --show_progress=yes --log_level=all)
-
-add_executable(all_checks all_tests.cpp template_checks.cpp macro_checks.cpp truncate_and_round_checks.cpp to_fixed_string_checks.cpp to_exponent_checks.cpp symmetric_error_checks.cpp)
-target_link_libraries(all_checks gcov ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} mpfr gmp error_helper_def symmetric_error )
 
 #execute_process(COMMAND dir RESULT_VARIABLE rv)
 #message("rv='${rv}'")
