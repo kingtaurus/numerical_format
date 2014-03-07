@@ -13,16 +13,29 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 #add_dependencies(  pdg_error_static pdg)
 
 add_library( pdg_error                    SHARED pdg_error.cpp )
-add_library( pdg_error_static             STATIC pdg_error.cpp)
-add_library( type                         SHARED type.cpp )
-add_library( type_static                  STATIC type.cpp )
-add_library( symmetric_error              SHARED symmetric_error.cpp)
-add_library( symmetric_error_static       STATIC symmetric_error.cpp)
-add_library( stream_output_proxy          SHARED stream_output_proxy.cpp)
-add_library( stream_output_proxy_static   STATIC stream_output_proxy.cpp)
-add_library( error_helper_def             SHARED error_helper_def.cpp)
-add_library( error_helper_def_static      SHARED error_helper_def.cpp)
+add_library( pdg_error-static             STATIC pdg_error.cpp )
+SET_TARGET_PROPERTIES( pdg_error-static PROPERTIES OUTPUT_NAME "pdg_error")
+SET_TARGET_PROPERTIES( pdg_error-static PROPERTIES PREFIX      "lib")
 
+add_library( type                         SHARED type.cpp )
+add_library( type-static                  STATIC type.cpp )
+SET_TARGET_PROPERTIES( type-static PROPERTIES OUTPUT_NAME "type")
+SET_TARGET_PROPERTIES( type-static PROPERTIES PREFIX      "lib")
+
+add_library( symmetric_error              SHARED symmetric_error.cpp)
+add_library( symmetric_error-static       STATIC symmetric_error.cpp)
+SET_TARGET_PROPERTIES( symmetric_error-static PROPERTIES OUTPUT_NAME "symmetric_error")
+SET_TARGET_PROPERTIES( symmetric_error-static PROPERTIES PREFIX      "lib")
+
+add_library( stream_output_proxy          SHARED stream_output_proxy.cpp)
+add_library( stream_output_proxy-static   STATIC stream_output_proxy.cpp)
+SET_TARGET_PROPERTIES( stream_output_proxy-static PROPERTIES OUTPUT_NAME "stream_output_proxy")
+SET_TARGET_PROPERTIES( stream_output_proxy-static PROPERTIES PREFIX      "lib")
+
+add_library( error_helper_def             SHARED error_helper_def.cpp)
+add_library( error_helper_def-static      STATIC error_helper_def.cpp)
+SET_TARGET_PROPERTIES( error_helper_def-static PROPERTIES OUTPUT_NAME "error_helper_def")
+SET_TARGET_PROPERTIES( error_helper_def-static PROPERTIES PREFIX      "lib")
 # # The library target "foo" already has a default OUTPUT_NAME of "foo", so we don't need to change it.
 # # The library target "foo-static" has a default OUTPUT_NAME of "foo-static", so change it.
 # SET_TARGET_PROPERTIES(foo-static PROPERTIES OUTPUT_NAME "foo")
@@ -31,25 +44,72 @@ add_library( error_helper_def_static      SHARED error_helper_def.cpp)
 # # so we add a "lib" prefix (which is default on other platforms anyway):
 # SET_TARGET_PROPERTIES(foo-static PROPERTIES PREFIX "lib")
 
-add_library( pdg SHARED pdg_error type stream_output_proxy error_helper_def)
+add_library( pdg       SHARED pdg_error       type stream_output_proxy error_helper_def)
+add_library( symmetric SHARED symmetric_error type stream_output_proxy error_helper_def)
+
+add_library( pdg-static       STATIC pdg_error.cpp       type.cpp stream_output_proxy.cpp error_helper_def.cpp)
+SET_TARGET_PROPERTIES( pdg-static PROPERTIES OUTPUT_NAME "pdg")
+SET_TARGET_PROPERTIES( pdg-static PROPERTIES PREFIX      "lib")
+
+add_library( symmetric-static STATIC symmetric_error.cpp type.cpp stream_output_proxy.cpp error_helper_def.cpp)
+SET_TARGET_PROPERTIES( symmetric-static PROPERTIES OUTPUT_NAME "symmetric")
+SET_TARGET_PROPERTIES( symmetric-static PROPERTIES PREFIX      "lib")
 
 SET(CPACK_GENERATOR "DEB")
-SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Greg King") #required
+#SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")#this doesn't seem to add the LICENSE to debian
+SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Greg King <greg.james.king@gmail.com>") #required
+SET(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/kingtaurus/numerical_format")
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY 
+"Numerical Error Format.\n Provides pdg and symmetric formatting of a central value and its associated\n error. Further numerical output can be formatted using latex or terminal\n decoration.")
+SET(CPACK_PACKAGE_VERSION_MAJOR "${${PROJECT_NAME}_VERSION_MAJOR}")
+SET(CPACK_PACKAGE_VERSION_MINOR "${${PROJECT_NAME}_VERSION_MINOR}")
+SET(CPACK_PACKAGE_VERSION_PATCH "0")
+SET(CPACK_SYSTEM_NAME "i386")
+SET(CPACK_PACKAGE_NAME "libnumeric-error-format")
 
-set_target_properties(pdg PROPERTIES
-  PUBLIC_HEADER "${PROJECT_SOURCE_DIR}/inc/pdg_error.hpp;${PROJECT_SOURCE_DIR}/inc/macro_definitions.hpp;${PROJECT_SOURCE_DIR}/inc/type.hpp;${PROJECT_SOURCE_DIR}/inc/stream_output_proxy.hpp;")
+#cpack --help-variable-list
+#FROM dpkg --print-architecture
+
+#SET(CPACK_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}_${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_MINOR_VERSION}.${CPACK_PACKAGE_VERSION_PATCH}")
+#SET(CPACK_SOURCE_PACKAGE_FILE_NAME "${CMAKE_PROJECT_NAME}_${CPACK_PACKAGE_MAJOR_VERSION}.${CPACK_PACKAGE_MINOR_VERSION}.${CPACK_PACKAGE_VERSION_PATCH}")
+
+SET(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
+SET(CPACK_DEBIAN_PACKAGE_SECTION "libdevel")
+#SET(CPACK_COMPONENTS_ALL Libraries ApplicationData)
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>=  2.17), libgcc1 (>= 1:3.4.2-12), libboost-program-options (>= 1.40.0)")
+SET(CPACK_STRIP_FILES "1")
+
+#lintian -i on the deb created:
+#missing changelog
+#missing LICENSE
+
+FILE(GLOB Common_HPP "${PROJECT_SOURCE_DIR}/inc/*.hpp")
+MESSAGE("Headers  : ${Common_HPP}")
+
+# uncomment next two lines and add the 3rd to the install directive below,
+#'if' you want to combine all install commands together
+#set_target_properties(pdg PROPERTIES
+#  PUBLIC_HEADER "${Common_HPP}")
+#PUBLIC_HEADER DESTINATION include/numeric_error_format COMPONENT pdg
 
 install(
-     TARGETS pdg
+     TARGETS pdg symmetric pdg-static symmetric-static
      LIBRARY DESTINATION lib/numeric_error_format COMPONENT pdg
-     PUBLIC_HEADER DESTINATION include/numeric_error_format COMPONENT pdg
-     
+     ARCHIVE DESTINATION lib/numeric_error_format COMPONENT pdg
 )
-install(
-     TARGETS pdg_error
+
+install( 
+     TARGETS pdg_error type symmetric_error stream_output_proxy error_helper_def
      LIBRARY DESTINATION lib/numeric_error_format COMPONENT pdg
 )
 
+install( 
+     TARGETS pdg_error-static type-static symmetric_error-static stream_output_proxy-static error_helper_def-static
+     ARCHIVE DESTINATION lib/numeric_error_format COMPONENT pdg
+)
+
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/inc/ DESTINATION include/
+        FILES_MATCHING PATTERN "*.hpp")
 
 INCLUDE(CPack)
 #make package
