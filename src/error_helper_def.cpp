@@ -10,7 +10,7 @@ double truncate_at(const double& in_value, int decimal_point = 0)
 // so: truncate_at(xyz.abcd)    |-> xyz           ,
 //     truncate_at(xyz.abcd,-1) |-> xy.zabc |-> xy,
 
-long double truncate_at(const long double& in_value, int decimal_point)
+long double truncate_at(const long double& in_value, int decimal_point = 0 )
 {
   return std::trunc(in_value * std::pow(10.,decimal_point)) * std::pow (10.,-decimal_point);
 }
@@ -18,8 +18,7 @@ long double truncate_at(const long double& in_value, int decimal_point)
 // so: truncate_at(xyz.abcd)    |-> xyz           ,
 //     truncate_at(xyz.abcd,-1) |-> xy.zabc |-> xy,
 
-template <>
-float round_at(const float& in_value, int decimal_point)
+float round_at(const float& in_value, int decimal_point = 0)
 {
   return std::round(in_value * std::pow(10.,decimal_point)) * std::pow (10., -decimal_point);//
   //this takes a double: xyz.abcd -> shifts the decimal_point (if positive it makes the number larger)
@@ -27,8 +26,8 @@ float round_at(const float& in_value, int decimal_point)
   //     round_at(xyz.abcd,-1) |-> xy.zabc |-> x|y|, where |y| is rounded *if necessary*
 }
 
-template <>
-double round_at(const double& in_value, int decimal_point)
+
+double round_at(const double& in_value, int decimal_point = 0)
 {
   return std::round(in_value * std::pow(10.,decimal_point)) * std::pow (10., -decimal_point);//
   //this takes a double: xyz.abcd -> shifts the decimal_point (if positive it makes the number larger)
@@ -36,8 +35,8 @@ double round_at(const double& in_value, int decimal_point)
   //     round_at(xyz.abcd,-1) |-> xy.zabc |-> x|y|, where |y| is rounded *if necessary*
 }
 
-template <>
-long double round_at(const long double& in_value, int decimal_point)
+
+long double round_at(const long double& in_value, int decimal_point = 0)
 {
   return std::round(in_value * std::pow(10.,decimal_point)) * std::pow (10., -decimal_point);//
   //this takes a double: xyz.abcd -> shifts the decimal_point (if positive it makes the number larger)
@@ -48,7 +47,7 @@ long double round_at(const long double& in_value, int decimal_point)
 
 //full specialization
 template <>
-std::string to_fixed_string(const double & in_type, const int in_precision)
+std::string to_fixed_string<double>(const double & in_type, const int in_precision)
 {
   if (std::is_floating_point<double>::value && boost::math::isinf(in_type))
   {

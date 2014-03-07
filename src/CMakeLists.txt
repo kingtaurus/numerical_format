@@ -36,15 +36,18 @@ add_library( pdg SHARED pdg_error type stream_output_proxy error_helper_def)
 SET(CPACK_GENERATOR "DEB")
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Greg King") #required
 
+set_target_properties(pdg PROPERTIES
+  PUBLIC_HEADER "${PROJECT_SOURCE_DIR}/inc/pdg_error.hpp;${PROJECT_SOURCE_DIR}/inc/macro_definitions.hpp;${PROJECT_SOURCE_DIR}/inc/type.hpp;${PROJECT_SOURCE_DIR}/inc/stream_output_proxy.hpp;")
+
 install(
      TARGETS pdg
-     LIBRARY DESTINATION lib/numeric_error_format
-     COMPONENT pdg
+     LIBRARY DESTINATION lib/numeric_error_format COMPONENT pdg
+     PUBLIC_HEADER DESTINATION include/numeric_error_format COMPONENT pdg
+     
 )
 install(
      TARGETS pdg_error
-     LIBRARY DESTINATION lib/numeric_error_format
-     COMPONENT pdg
+     LIBRARY DESTINATION lib/numeric_error_format COMPONENT pdg
 )
 
 
