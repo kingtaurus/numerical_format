@@ -70,7 +70,6 @@ SET(CPACK_PACKAGE_VERSION_PATCH "0")
 execute_process(COMMAND "dpkg --print-architecture" OUTPUT_VARIABLE DPKG_ARCH)
 SET(CPACK_SYSTEM_NAME ${DPKG_ARCH})
 SET(CPACK_PACKAGE_NAME "libnumeric-error-format")
-
 #cpack --help-variable-list
 #FROM dpkg --print-architecture
 
@@ -80,7 +79,23 @@ SET(CPACK_PACKAGE_NAME "libnumeric-error-format")
 SET(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
 SET(CPACK_DEBIAN_PACKAGE_SECTION "libdevel")
 #SET(CPACK_COMPONENTS_ALL Libraries ApplicationData)
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>=  2.17), libstdc++-4.8-dev (>= 4.8.1), linux-libc-dev (>= 3.11.0), libgcc1 (>= 1:4.8.0), libboost1.54-all-dev(>= 1.54.0), libmpfr-dev (>= 3.0.0), libgmp-dev (>= 2:5.1.1)")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>=  2.17), libstdc++-4.8-dev (>= 4.8.1), linux-libc-dev (>= 3.11.0), libgcc1 (>= 1:4.8.0), libboost1.54-all-dev(>= 1.54.0), libgmp10(>= 2:5.1.2 ), libmpfr-dev (>= 3.0.0), libgmp-dev (>= 2:5.1.1)")
+
+# Using the following
+# for x in *.cpp
+# do
+#   gcc -M ${x} -I../inc --std=c++11 | cut -f1 -d'\' | tr ' ' '\n' | grep -v ^$ | grep -v ${x} | grep -v ${x/cpp/o} | xargs -n1 apt-file search | cut -f1 -d: >> tmp
+#done
+#
+#
+#BUILD_DEPS
+# libboost1.54-dev
+# libc6-dev
+# libgcc-4.8-dev
+# libstdc++-4.8-dev
+# linux-libc-dev
+#LINK DEPS
+#ldd macro_checks | grep -v vdso | cut -f2 -d'>' | cut -f1 -d'(' | xargs -n1 apt-file search | cut -f1 -d':' | sort | uniq
 
 
 #lintian -i on the deb created:
@@ -112,8 +127,15 @@ install(
      ARCHIVE DESTINATION lib/numeric_error_format COMPONENT pdg
 )
 
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/inc/ DESTINATION include/
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/inc/ DESTINATION include/numeric_error_format
         FILES_MATCHING PATTERN "*.hpp")
+
+#SET(CPACK_STRIP_FILES "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/numeric_error_format/*.so")
+
+#execute_process(COMMAND ls $ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib
+#OUTPUT_VARIABLE lsresults)
+#message("${lsresults}")
+set(CPACK_WARN_ON_ABSOLUTE_INSTALL_DESTINATION TRUE)
 
 INCLUDE(CPack)
 #make package
