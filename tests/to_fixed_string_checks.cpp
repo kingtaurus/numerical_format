@@ -4,6 +4,7 @@
 #define BOOST_TEST_MODULE Main
 #endif
 
+#include <iostream>
 #include <boost/test/unit_test.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
 #include "macro_definitions.hpp"

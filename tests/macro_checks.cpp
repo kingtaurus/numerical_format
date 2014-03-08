@@ -3,14 +3,17 @@
 #define BOOST_TEST_MODULE Main
 #endif
 
+#include <iostream>
+
 #include <boost/test/unit_test.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include "macro_definitions.hpp"
 #include "file_line_exception.hpp"
 
-
 using namespace boost::unit_test;
+using std::cout;
+using std::endl;
 
 BOOST_AUTO_TEST_SUITE( macro_suite )
 
@@ -25,7 +28,7 @@ BOOST_AUTO_TEST_CASE ( line_macro )
   }
   catch(file_line_runtime_error& in_error)
   {
-    std::cout << in_error.what() << std::endl;
+    cout << in_error.what() << endl;
   }
 }
 
