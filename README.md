@@ -147,12 +147,19 @@ entire string within ```\ensuremath{}```.
   - Changing locale breaks tests (because imbuing a gloabl locale changes number formatting)
   - Added an executable: `format_error --pdg central_value error`; `format_error --pdg --latex central_value error`; `format_error --simple central_value error_1 error_2`; `format_error --utf ...`; `format_error --latex --name=...`
   - Add additional tests;
-
+  - Need to fix a problem related to not having an /etc/ld.so.conf.d config file (and then re-running ldconfig)
+  - static libraries work; adding to the link command `/usr/lib/numeric_error_format/libpdg.a`
+  
 Example Usage
 -------------
+If you install the package using the DEB. To use the code you'd do something like:
 
 ```C++
-#include "inc/symmetric_error.hpp"
+#include "numeric_error_format/symmetric_error.hpp"
 
 to_fixed_string<double>(x.yzabc,3);//[std::string] x.yza
 ```
+
+`g++ -std=c++11 <your_code>.cpp -L/usr/lib/numeric_error_format -lpdg -lsymmetric`**Doesn't work yet**
+`g++ -std=c++11 <your_code>.cpp /usr/lib/numeric_error_format/libsymmetric.a` ** DOES WORK**
+
