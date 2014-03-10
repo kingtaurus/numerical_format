@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(libnumeric_error_format)
+
+#set (CPACK_INSTALL_PREFIX "/usr")
+
 #SET(CMAKE_VERBOSE_MAKEFILE)
 set (${PROJECT_NAME}_VERSION_MAJOR 0)
 set (${PROJECT_NAME}_VERSION_MINOR 1)
@@ -19,6 +22,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 ENABLE_TESTING()
 
 include(CodeCoverage)
+include(CMakeFindBinUtils)
 
 #cmake -DCMAKE_BUILD_TYPE=Debug ../ -G "Unix Makefiles"
 set(Boost_USE_STATIC_LIBS OFF)
@@ -31,17 +35,17 @@ ENABLE_TESTING()
 
 SET(BUILD_SHARED_LIBS ON)
 
-SET (CMAKE_C_FLAGS                "-O0 -g3 -Wall -W --coverage")
-SET (CMAKE_C_FLAGS_DEBUG          "-O0 -g3 --coverage")
-SET (CMAKE_C_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
-SET (CMAKE_C_FLAGS_RELEASE        "-O4 -DNDEBUG")
-SET (CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g2")
+SET (CMAKE_C_FLAGS                "-O0 -g3 -Wall -W --coverage -fPIC")
+SET (CMAKE_C_FLAGS_DEBUG          "-O0 -g3 --coverage -fPIC")
+SET (CMAKE_C_FLAGS_MINSIZEREL     "-Os -DNDEBUG -fPIC")
+SET (CMAKE_C_FLAGS_RELEASE        "-O4 -DNDEBUG -fPIC")
+SET (CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g2 -fPIC")
 
-SET (CMAKE_CXX_FLAGS              "-O0 -g3 -Wall -W -Wshadow -Wunused-variable -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers -Wno-deprecated -Woverloaded-virtual -Wwrite-strings --coverage")
-SET (CMAKE_CXX_FLAGS_DEBUG          "-O0 -g3 --coverage")
-SET (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
-SET (CMAKE_CXX_FLAGS_RELEASE        "-O4 -DNDEBUG")
-SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g2")
+SET (CMAKE_CXX_FLAGS                "-O0 -g3 -Wall -W -Wshadow -Wunused-variable -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers -Wno-deprecated -Woverloaded-virtual -Wwrite-strings --coverage -fPIC")
+SET (CMAKE_CXX_FLAGS_DEBUG          "-O0 -g3 --coverage -fPIC")
+SET (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG -fPIC")
+SET (CMAKE_CXX_FLAGS_RELEASE        "-O4 -DNDEBUG -fPIC")
+SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g2 -fPIC")
 
 IF(NOT CMAKE_BUILD_TYPE)
    SET(CMAKE_BUILD_TYPE Debug
@@ -64,8 +68,8 @@ elseif (${CMAKE_BUILD_TYPE} MATCHES "Debug")
   set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS_DEBUG}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_DEBUG}")
 elseif (${CMAKE_BUILD_TYPE} MATCHES "Release")
-  set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS_RELEASE}")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_RELEASE}")
+  set(CMAKE_C_FLAGS   "-g0 -s ${CMAKE_C_FLAGS_RELEASE}")
+  set(CMAKE_CXX_FLAGS " -g0 -s ${CMAKE_CXX_FLAGS_RELEASE}")
 elseif (${CMAKE_BUILD_TYPE} MATCHES "RelWithDebInfo")
   set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
@@ -81,8 +85,6 @@ elseif ()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_DEBUG}")
 endif()
 
-#set(CMAKE_C_FLAGS    "${${CMAKE_C_FLAGS}_${CMAKE_BUILD_TYPE}}")
-#set(CMAKE_CXX_FLAGS  "${${CMAKE_CXX_FLAGS}_${CMAKE_BUILD_TYPE}}")
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} --std=c++11")
 message("** C   FLAGS             : ${CMAKE_C_FLAGS} **")
 message("** CXX FLAGS             : ${CMAKE_CXX_FLAGS} **")
@@ -91,10 +93,6 @@ configure_file (
   "${PROJECT_SOURCE_DIR}/inc/config.h.in"
   "${PROJECT_BINARY_DIR}/config.h"
   )
-#configure_file (
-#  "${PROJECT_SOURCE_DIR}/inc/config.h.in"
-#  "${PROJECT_SOURCE_DIR}/inc/config.h"
-#  )
 
 include_directories(
   "${PROJECT_SOURCE_DIR}"
