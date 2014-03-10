@@ -14,6 +14,8 @@
 using namespace boost::unit_test;
 namespace bm = boost::multiprecision;
 
+
+//TODO convert to a fixture testing
 BOOST_AUTO_TEST_SUITE( fixed_string_suite )
 BOOST_AUTO_TEST_CASE ( to_fixed_string_test_default_double )
 {

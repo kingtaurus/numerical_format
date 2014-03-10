@@ -4,7 +4,6 @@
 #define BOOST_TEST_MODULE Main
 #endif
 
-
 #include <boost/test/unit_test.hpp>
 #include "macro_definitions.hpp"
 #include "file_line_exception.hpp"
@@ -12,7 +11,6 @@
 #include "symmetric_error.hpp"
 
 using namespace boost::unit_test;
-
 
 BOOST_AUTO_TEST_SUITE( symmetric_error_suite )
 
