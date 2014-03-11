@@ -97,7 +97,7 @@ namespace symmetric_error
 
     int precision = current_max_expo - current_min_expo + 1;
     double scale_value = pow(10., std::min(0, exponent_value - current_max_expo));
-    std::string out_string = to_fixed_string<double>(decimal_representation<double>(x) * scale_value, precision);
+    std::string out_string = to_fixed_string(decimal_representation<double>(x) * scale_value, precision);
 
     std::vector<std::string> error_string;
 
@@ -105,7 +105,7 @@ namespace symmetric_error
     {
   		int exponent_error = exponent<double>(error);
       double scale_error = pow(10., std::min(0, exponent_error - current_max_expo));
-      std::string out_error_string = to_fixed_string<double>(decimal_representation<double>(error) * scale_error, precision);
+      std::string out_error_string = to_fixed_string(decimal_representation<double>(error) * scale_error, precision);
       error_string.push_back(out_error_string);
     }
     return std::tuple<std::string, std::vector<std::string>, int>(out_string, error_string, current_max_expo);
@@ -152,8 +152,8 @@ namespace symmetric_error
     {
       prec = std::abs(min_expo) + 1;
     }
-    size_t width_value_1 = to_fixed_string<double>(value_1, prec).size();
-    size_t width_value_2 = to_fixed_string<double>(value_2, prec).size();
+    size_t width_value_1 = to_fixed_string(value_1, prec).size();
+    size_t width_value_2 = to_fixed_string(value_2, prec).size();
 
     size_t max_width     = std::max(width_value_1,width_value_2);
 
@@ -199,7 +199,7 @@ namespace symmetric_error
     size_t max_width = 0;
     for (auto & in : vec)
     {
-      max_width = std::max(max_width, to_fixed_string<double>(in,prec).size()) ;
+      max_width = std::max(max_width, to_fixed_string(in,prec).size()) ;
     }
 
     std::vector<std::string> out_vector = {};
