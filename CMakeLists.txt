@@ -69,7 +69,7 @@ elseif (${CMAKE_BUILD_TYPE} MATCHES "Debug")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_DEBUG}")
 elseif (${CMAKE_BUILD_TYPE} MATCHES "Release")
   set(CMAKE_C_FLAGS   "-g0 -s ${CMAKE_C_FLAGS_RELEASE}")
-  set(CMAKE_CXX_FLAGS " -g0 -s ${CMAKE_CXX_FLAGS_RELEASE}")
+  set(CMAKE_CXX_FLAGS "-g0 -s ${CMAKE_CXX_FLAGS_RELEASE}")
 elseif (${CMAKE_BUILD_TYPE} MATCHES "RelWithDebInfo")
   set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
@@ -86,8 +86,8 @@ elseif ()
 endif()
 
 set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} --std=c++11")
-message("** C   FLAGS             : ${CMAKE_C_FLAGS} **")
-message("** CXX FLAGS             : ${CMAKE_CXX_FLAGS} **")
+message("** C   FLAGS             : * ${CMAKE_C_FLAGS} *")
+message("** CXX FLAGS             : * ${CMAKE_CXX_FLAGS} *")
 
 configure_file (
   "${PROJECT_SOURCE_DIR}/inc/config.h.in"
