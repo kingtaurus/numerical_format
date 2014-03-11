@@ -3,7 +3,6 @@
 
 #include <algorithm>
 #include <stdexcept>
-#include <tuple>
 
 #include "symmetric_error.hpp"
 
