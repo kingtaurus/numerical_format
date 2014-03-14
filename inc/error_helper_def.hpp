@@ -72,9 +72,9 @@ std::string to_fixed_string(const double & in_type, const int precision);
 
 template <typename T>
 inline 
-std::string to_sci_string(const T & in_decimal, const int in_precision = 2)
+std::string to_sci_string(const T & in_decimal, const int in_precision = 1) throw(std::runtime_error)
 {
-  if (std::is_floating_point<T>::value && boost::math::isinf(in_decimal))
+  if (std::is_floating_point<T>::value && (boost::math::isinf(in_decimal) || boost::math::isnan(in_decimal)))
   {
     std::string in_function = __PRETTY_FUNCTION__;
     throw std::runtime_error("exception in function " + in_function + "in " __FILE__ " " STRING__LINE__);//double expand this macro will make this a c-string
@@ -88,9 +88,9 @@ std::string to_sci_string(const T & in_decimal, const int in_precision = 2)
 
 template <typename T>
 inline 
-std::string to_sci_string_max_prec(const T & in_decimal)
+std::string to_sci_string_max_prec(const T & in_decimal) throw(std::runtime_error)
 {
-  if (std::is_floating_point<T>::value && boost::math::isinf(in_decimal))
+  if (std::is_floating_point<T>::value && (boost::math::isinf(in_decimal) || boost::math::isnan(in_decimal)) )
   {
     std::string in_function = __PRETTY_FUNCTION__;
     throw std::runtime_error("exception in function " + in_function + "in " __FILE__ " " STRING__LINE__);//double expand this macro will make this a c-string
