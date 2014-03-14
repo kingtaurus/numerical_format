@@ -71,7 +71,7 @@ std::string to_fixed_string(const double & in_type, const int precision);
 
 
 template <typename T>
-inline 
+inline
 std::string to_sci_string(const T & in_decimal, const int in_precision = 1) throw(std::runtime_error)
 {
   if (std::is_floating_point<T>::value && (boost::math::isinf(in_decimal) || boost::math::isnan(in_decimal)))
@@ -87,7 +87,7 @@ std::string to_sci_string(const T & in_decimal, const int in_precision = 1) thro
 }
 
 template <typename T>
-inline 
+inline
 std::string to_sci_string_max_prec(const T & in_decimal) throw(std::runtime_error)
 {
   if (std::is_floating_point<T>::value && (boost::math::isinf(in_decimal) || boost::math::isnan(in_decimal)) )
