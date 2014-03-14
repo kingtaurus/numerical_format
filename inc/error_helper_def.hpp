@@ -102,16 +102,32 @@ std::string to_sci_string_max_prec(const T & in_decimal) throw(std::runtime_erro
 	return to_string.str();
 }
 
+//template <typename T>
+//inline int exponent(const T & in_value) throw(std::runtime_error)
+//{
+//  std::string exponential = to_sci_string<T>(in_value,1);
+//	std::string number = exponential.substr(exponential.find_last_of("Ee") + 1, std::string::npos);
+//	return boost::lexical_cast<int>(number);
+//}
+
 template <typename T>
-inline int exponent(const T & in_value) throw(std::runtime_error)
+inline int exponent(const T & in_value, const int in_precision = 1)
 {
-  std::string exponential = to_sci_string<T>(in_value,1);
+  std::string exponential = to_sci_string<T>(in_value,in_precision);
 	std::string number = exponential.substr(exponential.find_last_of("Ee") + 1, std::string::npos);
 	return boost::lexical_cast<int>(number);
 }
 
 template <typename T>
-inline double decimal_representation(const T & in_decimal)
+inline int exponent_max_prec(const T & in_value)
+{
+  std::string exponential = to_sci_string<T>(in_value,std::numeric_limits<T>::digits10);
+	std::string number = exponential.substr(exponential.find_last_of("Ee") + 1, std::string::npos);
+	return boost::lexical_cast<int>(number);
+}
+
+template <typename T>
+inline double decimal_representation_max_prec(const T & in_decimal)
 {
   std::string a_string = to_sci_string_max_prec<T>(in_decimal);
 	a_string.erase(a_string.find_first_of("Ee"), std::string::npos);
@@ -119,19 +135,25 @@ inline double decimal_representation(const T & in_decimal)
 }
 
 template <typename T>
-inline
-std::string two_digits(const T & in_decimal)
+inline double decimal_representation(const T & in_decimal, const int in_precision = 1)
 {
-	std::string two_digits = to_sci_string(in_decimal,1);
-	two_digits.erase(two_digits.find_first_of("Ee"), std::string::npos);
-	return two_digits;
+  std::string out_string = to_sci_string(in_decimal, in_precision);
+  out_string.erase(out_string.find_first_of("Ee"), std::string::npos);
+  return boost::lexical_cast<double>(out_string);
 }
 
 template <typename T>
-inline double two_digits_as_double(const T & in_decimal)
+inline
+std::string two_digits(const T & in_decimal)
+{
+  return boost::lexical_cast<std::string>(decimal_representation(in_decimal, 1));
+}
+
+template <typename T>
+inline double two_digits_double(const T & in_decimal)
 {
   //alternate round_at(going_to_specific_double, -exponent<double>(going_to_specific_double + 2);
-	return boost::lexical_cast<double>(two_digits<T>(in_decimal));
+	return decimal_representation(in_decimal,1);
 }
 
 

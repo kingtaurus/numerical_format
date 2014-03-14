@@ -10,6 +10,8 @@
 #include "error_helper_def.hpp"
 #include "symmetric_error.hpp"
 
+#include <iostream>
+
 using namespace boost::unit_test;
 
 //std::numeric_limits<double>::infinity()
@@ -129,23 +131,6 @@ struct test_fixture
 };
 
 
-BOOST_FIXTURE_TEST_SUITE(multiple_error_checks, test_fixture)
-
-BOOST_AUTO_TEST_CASE(check_error_throws_vector_empty)
-{
-  using namespace symmetric_error;
-
-  BOOST_TEST_MESSAGE("check_one");
-  BOOST_REQUIRE_THROW(to_tuple_multi_errors(values.value_1, {}), std::runtime_error);
-  //make sure that an empty vector throws;
-  BOOST_REQUIRE_THROW(value_to_string_multiple_errors(values.value_1, {}), std::runtime_error);
-  BOOST_REQUIRE_THROW(to_string_multiple_errors_into_vector(values.value_1, {}), std::runtime_error);
-}
-
-BOOST_AUTO_TEST_CASE(check_error_throws_inf)
-{
-  using namespace symmetric_error;
-
 //to_string_value(double,double)
 //to_string_error(double,double)
 //to_string_value_fixed(double,double)
@@ -158,32 +143,350 @@ BOOST_AUTO_TEST_CASE(check_error_throws_inf)
 //to_string_no_exponent(double,double,double)
 //to_string_no_exponent(double,double,double,double)
 
-  BOOST_TEST_MESSAGE("check_one");
+
+BOOST_FIXTURE_TEST_SUITE(multiple_error_checks, test_fixture)
+
+BOOST_AUTO_TEST_CASE(check_error_throws_vector_empty)
+{
+  using namespace symmetric_error;
+  BOOST_REQUIRE_THROW(to_tuple_multi_errors(values.value_1, {}), std::runtime_error);
+  //make sure that an empty vector throws;
+  BOOST_REQUIRE_THROW(value_to_string_multiple_errors(values.value_1, {}), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_multiple_errors_into_vector(values.value_1, {}), std::runtime_error);
+}
+
+BOOST_AUTO_TEST_CASE(check_error_throws_to_string_value_throw_checks)
+{
+  using namespace symmetric_error;
+  //make sure that an infinity throws vector throws;
   BOOST_REQUIRE_THROW(to_string_value(values.value_1, errors.error_inf), std::runtime_error);
   BOOST_REQUIRE_THROW(to_string_value(values.value_inf, errors.error_1), std::runtime_error);
+
+  BOOST_REQUIRE_THROW(to_string_value(values.value_1, errors.error_nan), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_value(values.value_nan, errors.error_1), std::runtime_error);
+}
+
+BOOST_AUTO_TEST_CASE(check_error_throws_to_string_value_output_checks)
+{
+  using namespace symmetric_error;
+
+  //to_string_value(double,double)
+  //make sure that an infinity throws vector throws;
+  BOOST_REQUIRE_THROW(to_string_value(values.value_1, errors.error_inf), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_value(values.value_inf, errors.error_1), std::runtime_error);
+
+  BOOST_REQUIRE_THROW(to_string_value(values.value_1, errors.error_nan), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_value(values.value_nan, errors.error_1), std::runtime_error);
+  //found a bunch of errors here: if the value would round up, 
+  //then you have a problem (because you get an extra digit of precision)
+  //
+
+  BOOST_REQUIRE_EQUAL(to_string_value(1.0,0.01), "1.000");
+  BOOST_REQUIRE_EQUAL(to_string_value(1.1,0.01), "1.100");
+  BOOST_REQUIRE_EQUAL(to_string_value(1.2,0.01), "1.200");
+
+  BOOST_REQUIRE_EQUAL(to_string_value(10.0,0.01), "1.0000");
+  BOOST_REQUIRE_EQUAL(to_string_value(11.1,0.01), "1.1100");
+  BOOST_REQUIRE_EQUAL(to_string_value(12.2,0.01), "1.2200");
+
+  BOOST_REQUIRE_EQUAL(to_string_error(1.0,0.01), "0.010");
+  BOOST_REQUIRE_EQUAL(to_string_error(1.1,0.01), "0.010");
+  BOOST_REQUIRE_EQUAL(to_string_error(1.2,0.01), "0.010");
+
+  BOOST_REQUIRE_EQUAL(to_string_error(10.0,0.01),  "0.0010");
+  BOOST_REQUIRE_EQUAL(to_string_error(11.1,0.011), "0.0011");
+  BOOST_REQUIRE_EQUAL(to_string_error(12.2,0.012), "0.0012");
+
+  BOOST_REQUIRE_EQUAL(to_string_value(99.999,9.99), "1.00");
+  BOOST_REQUIRE_EQUAL(to_string_error(99.999,9.99), "0.10");
+
+  BOOST_REQUIRE_EQUAL(to_string_value(9.999,99.99), "0.10");
+  BOOST_REQUIRE_EQUAL(to_string_error(9.999,99.99), "1.00");
+                                     //99.999 +/- 9.99
+                                     //99.999-> 100
+                                     // 9.99 ->  10
+
+  BOOST_REQUIRE_EQUAL(to_string_value(99.999,99.99), "1.0");
+  BOOST_REQUIRE_EQUAL(to_string_error(99.999,99.99), "1.0");
+
+  BOOST_REQUIRE_EQUAL(to_string_value(999.999,9.99), "1.000");
+  BOOST_REQUIRE_EQUAL(to_string_error(999.999,9.99), "0.010");
+
+  BOOST_REQUIRE_EQUAL(to_string_value(9.999,999.99), "0.010");
+  BOOST_REQUIRE_EQUAL(to_string_error(9.999,999.99), "1.000");
+
+}
+
+
+BOOST_AUTO_TEST_CASE(check_to_string_exponent)
+{
+  using namespace symmetric_error;
+  BOOST_REQUIRE_EQUAL(get_exponent(9.999,9.999),1);
+}
+
+
+BOOST_AUTO_TEST_CASE(check_get_max_exponent)
+{
+  using namespace symmetric_error;
+  BOOST_REQUIRE_THROW(get_max_exponent({}), std::runtime_error);
+  BOOST_REQUIRE_THROW(get_max_exponent({std::numeric_limits<double>::infinity()}), std::runtime_error);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({10000000.0}),7);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({1000000.00}),6);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({100000.000}),5);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({10000.0000}),4);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({1000.00000}),3);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({100.000000}),2);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({10.0000000}),1);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({1.00000000}),0);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.10000000}),-1);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.01000000}),-2);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.00100000}),-3);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.00010000}),-4);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.00001000}),-5);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.00000100}),-6);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.00000010}),-7);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.00000001}),-8);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.0000000010}),-9);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.0000000001}),-10);
+
+  //rounding checks
+  BOOST_REQUIRE_EQUAL(get_max_exponent({99999999.999}),8);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({9999999.9999}),7);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({999999.99999}),6);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({99999.999999}),5);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({9999.9999999}),4);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({999.99999999}),3);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({99.999999999}),2);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({9.9999999999}),1);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.9999999999}),0);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.0999999999}),-1);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.0099999999}),-2);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.0009999999}),-3);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.0000999999}),-4);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.0000099999}),-5);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.0000009999}),-6);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.0000000999}),-7);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.00000000999}),-8);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.000000000999}),-9);
+
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.10, 0.01, 0.003, 0.0005}), -1);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.10, 0.01, 0.003, 0.003}),  -1);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.10, 0.01, 0.055, 0.0705}), -1);
+  BOOST_REQUIRE_EQUAL(get_max_exponent({0.10, 99.01, 0.003, 0.0005}), 1);
+
+
+}
+
+BOOST_AUTO_TEST_CASE(check_to_string_min_exponent)
+{
+  using namespace symmetric_error;
+  BOOST_REQUIRE_THROW(get_min_exponent({}), std::runtime_error);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({10000000.0}),7);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({1000000.00}),6);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({100000.000}),5);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({10000.0000}),4);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({1000.00000}),3);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({100.000000}),2);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({10.0000000}),1);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({1.00000000}),0);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.10000000}),-1);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.01000000}),-2);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.00100000}),-3);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.00010000}),-4);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.00001000}),-5);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.00000100}),-6);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.00000010}),-7);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.00000001}),-8);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.0000000010}),-9);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.0000000001}),-10);
+
+  //rounding checks
+  BOOST_REQUIRE_EQUAL(get_min_exponent({99999999.999}),8);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({9999999.9999}),7);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({999999.99999}),6);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({99999.999999}),5);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({9999.9999999}),4);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({999.99999999}),3);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({99.999999999}),2);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({9.9999999999}),1);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.9999999999}),0);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.0999999999}),-1);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.0099999999}),-2);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.0009999999}),-3);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.0000999999}),-4);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.0000099999}),-5);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.0000009999}),-6);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.0000000999}),-7);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.00000000999}),-8);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.000000000999}),-9);
+
+
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.10, 0.01, 0.003, 0.0005}), -4);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.10, 0.01, 0.003, 0.003}),  -3);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.10, 0.01, 0.055, 0.0705}), -2);
+  BOOST_REQUIRE_EQUAL(get_min_exponent({0.10, 99.01, 0.003, 0.0005}),-4);
+
+}
+
+
+BOOST_AUTO_TEST_CASE(check_error_throws_to_string_error)
+{
+  using namespace symmetric_error;
+
   BOOST_REQUIRE_THROW(to_string_error(values.value_1, errors.error_inf), std::runtime_error);
   BOOST_REQUIRE_THROW(to_string_error(values.value_inf, errors.error_1), std::runtime_error);
 
+  BOOST_REQUIRE_THROW(to_string_error(values.value_1, errors.error_nan), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_error(values.value_nan, errors.error_1), std::runtime_error);
+}
+
+
+BOOST_AUTO_TEST_CASE(check_error_throws_to_string_value_fixed)
+{
+  using namespace symmetric_error;
+
   BOOST_REQUIRE_THROW(to_string_value_fixed(values.value_1, errors.error_inf), std::runtime_error);
   BOOST_REQUIRE_THROW(to_string_value_fixed(values.value_inf, errors.error_1), std::runtime_error);
-  BOOST_REQUIRE_THROW(to_string_error_fixed(values.value_1, errors.error_inf), std::runtime_error);
+
+  BOOST_REQUIRE_THROW(to_string_value_fixed(values.value_1,   errors.error_nan), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_value_fixed(values.value_nan, errors.error_1), std::runtime_error);
+}
+
+
+BOOST_AUTO_TEST_CASE(check_error_throws_to_string_value_error)
+{
+  using namespace symmetric_error;
+
+  BOOST_REQUIRE_THROW(to_string_error_fixed(values.value_1,   errors.error_inf), std::runtime_error);
   BOOST_REQUIRE_THROW(to_string_error_fixed(values.value_inf, errors.error_1), std::runtime_error);
 
+  BOOST_REQUIRE_THROW(to_string_error_fixed(values.value_1,   errors.error_nan), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_error_fixed(values.value_nan, errors.error_1), std::runtime_error);
+}
 
 
+BOOST_AUTO_TEST_CASE(check_error_throws_to_tuple_multi_errors)
+{
+  using namespace symmetric_error;
 
-  BOOST_REQUIRE_THROW(to_tuple_multi_errors(values.value_1, {errors.error_inf}), std::runtime_error);
-  //make sure that an empty vector throws;
-  BOOST_REQUIRE_THROW(value_to_string_multiple_errors(values.value_1, {errors.error_inf}), std::runtime_error);
-  BOOST_REQUIRE_THROW(to_string_multiple_errors_into_vector(values.value_1, {errors.error_inf}), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_tuple_multi_errors(values.value_1,                 {errors.error_inf}), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_tuple_multi_errors(values.value_inf,               {errors.error_1}), std::runtime_error);
+  //add more than one entry to the vector
+  BOOST_REQUIRE_THROW(to_tuple_multi_errors(values.value_1,                 {errors.error_1, errors.error_inf}), std::runtime_error);
+  //add more than two entry to the vector
+  BOOST_REQUIRE_THROW(to_tuple_multi_errors(values.value_1,                 {errors.error_1, errors.error_2, errors.error_inf}), std::runtime_error);
+  //add more than three entry to the vector
+  BOOST_REQUIRE_THROW(to_tuple_multi_errors(values.value_1,                 {errors.error_1, errors.error_2, errors.error_3, errors.error_inf}), std::runtime_error);
 
-  BOOST_REQUIRE_THROW(to_tuple_multi_errors(values.value_inf, {errors.error_inf}), std::runtime_error);
-  //make sure that an empty vector throws;
-  BOOST_REQUIRE_THROW(value_to_string_multiple_errors(values.value_inf, {errors.error_inf}), std::runtime_error);
-  BOOST_REQUIRE_THROW(to_string_multiple_errors_into_vector(values.value_inf, {errors.error_inf}), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_tuple_multi_errors(values.value_1,                 {errors.error_nan}), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_tuple_multi_errors(values.value_nan,               {errors.error_1}), std::runtime_error);
+  //add more than one entry to the vector
+  BOOST_REQUIRE_THROW(to_tuple_multi_errors(values.value_1,                 {errors.error_1, errors.error_nan}), std::runtime_error);
+  //add more than two entry to the vector
+  BOOST_REQUIRE_THROW(to_tuple_multi_errors(values.value_1,                 {errors.error_1, errors.error_2, errors.error_nan}), std::runtime_error);
+  //add more than three entry to the vector
+  BOOST_REQUIRE_THROW(to_tuple_multi_errors(values.value_1,                 {errors.error_1, errors.error_2, errors.error_3, errors.error_nan}), std::runtime_error);
+}
 
 
+BOOST_AUTO_TEST_CASE(check_error_throws_value_to_string_multiple_errors)
+{
+  using namespace symmetric_error;
 
+  BOOST_REQUIRE_THROW(value_to_string_multiple_errors(values.value_1,       {errors.error_inf}), std::runtime_error);
+  BOOST_REQUIRE_THROW(value_to_string_multiple_errors(values.value_inf,     {errors.error_1}), std::runtime_error);
+  BOOST_REQUIRE_THROW(value_to_string_multiple_errors(values.value_1,       {errors.error_1, errors.error_inf}), std::runtime_error);
+  BOOST_REQUIRE_THROW(value_to_string_multiple_errors(values.value_1,       {errors.error_1, errors.error_2, errors.error_inf}), std::runtime_error);
+  BOOST_REQUIRE_THROW(value_to_string_multiple_errors(values.value_1,       {errors.error_1, errors.error_2, errors.error_3, errors.error_inf}), std::runtime_error);
+
+  BOOST_REQUIRE_THROW(value_to_string_multiple_errors(values.value_1,       {errors.error_nan}), std::runtime_error);
+  BOOST_REQUIRE_THROW(value_to_string_multiple_errors(values.value_nan,     {errors.error_1}), std::runtime_error);
+  BOOST_REQUIRE_THROW(value_to_string_multiple_errors(values.value_1,       {errors.error_1, errors.error_nan}), std::runtime_error);
+  BOOST_REQUIRE_THROW(value_to_string_multiple_errors(values.value_1,       {errors.error_1, errors.error_2, errors.error_nan}), std::runtime_error);
+  BOOST_REQUIRE_THROW(value_to_string_multiple_errors(values.value_1,       {errors.error_1, errors.error_2, errors.error_3, errors.error_nan}), std::runtime_error);
+}
+
+
+BOOST_AUTO_TEST_CASE(check_error_throws_to_string_multiple_errors_into_vector)
+{
+  using namespace symmetric_error;
+
+  BOOST_REQUIRE_THROW(to_string_multiple_errors_into_vector(values.value_1,   {errors.error_inf}), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_multiple_errors_into_vector(values.value_inf, {errors.error_1}), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_multiple_errors_into_vector(values.value_1,   {errors.error_1, errors.error_inf}), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_multiple_errors_into_vector(values.value_1,   {errors.error_1, errors.error_2, errors.error_inf}), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_multiple_errors_into_vector(values.value_1,   {errors.error_1, errors.error_2, errors.error_3, errors.error_inf}), std::runtime_error);
+
+  BOOST_REQUIRE_THROW(to_string_multiple_errors_into_vector(values.value_1,   {errors.error_nan}), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_multiple_errors_into_vector(values.value_nan, {errors.error_1}), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_multiple_errors_into_vector(values.value_1,   {errors.error_1, errors.error_nan}), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_multiple_errors_into_vector(values.value_1,   {errors.error_1, errors.error_2, errors.error_nan}), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_multiple_errors_into_vector(values.value_1,   {errors.error_1, errors.error_2, errors.error_3, errors.error_nan}), std::runtime_error);
+}
+
+BOOST_AUTO_TEST_CASE(check_error_throws_to_string_no_exponent)
+{
+  using namespace symmetric_error;
+
+  //to_string_no_exponent(double,double)
+  BOOST_REQUIRE_THROW(to_string_no_exponent(values.value_1,   errors.error_inf), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent(values.value_inf, errors.error_1),   std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent(values.value_inf, errors.error_inf), std::runtime_error);
+
+  BOOST_REQUIRE_THROW(to_string_no_exponent(values.value_1,   errors.error_nan), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent(values.value_nan, errors.error_1),   std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent(values.value_nan, errors.error_nan), std::runtime_error);
+}
+
+BOOST_AUTO_TEST_CASE(check_error_throws_to_string_no_exponent_three_parms)
+{
+  using namespace symmetric_error;
+
+  //to_string_no_exponent(double,double,double)
+  BOOST_REQUIRE_THROW(to_string_no_exponent(values.value_1,   errors.error_1, errors.error_inf), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent(values.value_1,   errors.error_inf, errors.error_1), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent(values.value_inf, errors.error_1, errors.error_2),   std::runtime_error);
+
+  BOOST_REQUIRE_THROW(to_string_no_exponent(values.value_1,   errors.error_1,   errors.error_nan), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent(values.value_1,   errors.error_nan, errors.error_1),   std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent(values.value_nan, errors.error_1,   errors.error_2),   std::runtime_error);
+}
+
+BOOST_AUTO_TEST_CASE(check_error_throws_to_string_no_exponent_four_parms)
+{
+  using namespace symmetric_error;
+
+  //to_string_no_exponent(double,double,double,double)
+  BOOST_REQUIRE_THROW(to_string_no_exponent(values.value_1,   errors.error_1,   errors.error_2,   errors.error_inf), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent(values.value_1,   errors.error_1,   errors.error_inf, errors.error_2),   std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent(values.value_1,   errors.error_inf, errors.error_1,   errors.error_2),   std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent(values.value_inf, errors.error_1,   errors.error_2,   errors.error_3 ),  std::runtime_error);
+
+  BOOST_REQUIRE_THROW(to_string_no_exponent(values.value_1,   errors.error_1,   errors.error_2,   errors.error_nan), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent(values.value_1,   errors.error_1,   errors.error_nan, errors.error_2),   std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent(values.value_1,   errors.error_nan, errors.error_1,   errors.error_2),   std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent(values.value_nan, errors.error_1,   errors.error_2,   errors.error_3 ),  std::runtime_error);
+}
+
+BOOST_AUTO_TEST_CASE(check_error_throws_to_string_no_exponent_vector_parm)
+{
+  using namespace symmetric_error;
+
+  //to_string_no_exponent(std::vector<double>)
+  BOOST_REQUIRE_THROW(to_string_no_exponent({values.value_1,   errors.error_1,   errors.error_2,   errors.error_inf}), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent({values.value_1,   errors.error_1,   errors.error_inf,   errors.error_2}),   std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent({values.value_1,   errors.error_inf,   errors.error_2,   errors.error_3}),   std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent({values.value_inf,   errors.error_1,   errors.error_2,   errors.error_3} ),  std::runtime_error);
+
+  BOOST_REQUIRE_THROW(to_string_no_exponent({}), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent({values.value_inf,   errors.error_1}),   std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent({values.value_1,   errors.error_inf,   errors.error_2}),   std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent({values.value_1,   errors.error_1,     errors.error_2,   errors.error_3, errors.error_inf} ),  std::runtime_error);
+
+  BOOST_REQUIRE_THROW(to_string_no_exponent({values.value_1,   errors.error_1,   errors.error_2,   errors.error_nan}), std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent({values.value_1,   errors.error_1,   errors.error_nan,   errors.error_2}),   std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent({values.value_1,   errors.error_nan,   errors.error_2,   errors.error_3}),   std::runtime_error);
+  BOOST_REQUIRE_THROW(to_string_no_exponent({values.value_nan,   errors.error_1,   errors.error_2,   errors.error_3} ),  std::runtime_error);
 }
 
 

@@ -8,44 +8,151 @@
 
 namespace symmetric_error
 {
+
   std::string to_string_value(const double in_value, const double in_error)
   {
+//    bool in_value_larger = (std::abs(in_value) > std::abs(in_error)) ? true  : false;
+//    bool in_error_larger = (std::abs(in_error) > std::abs(in_value)) ? true  : false;
+//    bool value_error_equal = !in_value_larger && !in_error_larger;
+//    //unlikely to happen, but it should be checked
+//    // PROBABLY should replace this with a closeness check
+//    //
+//    //both evaluations need to be done (because its a 'weak ordering')
+//    //[i.e. if in_value == in_error]
+//    //
     int exponent_value = exponent<double>(in_value);
     int exponent_error = exponent<double>(in_error);
+
+    //exponent is the same (no rounding worry)
+    if (exponent_value == exponent_error)
+    {
+      return to_fixed_string(decimal_representation<double>(in_value), 1);//then just need to tag an error on the end;
+    }
+
+    //if they are different (need to change the precision on the larger one)
+    // then exponent_value can drop by 1 (more precision means less likely
+    // to round up);
+    if (exponent_value > exponent_error)
+    {
+      exponent_value = exponent<double>(in_value,std::abs(exponent_error) + 1);
+    }
+    else if (exponent_value < exponent_error)
+    {
+      exponent_error = exponent<double>(in_error,std::abs(exponent_value) + 1);
+    }
 
    	int min_exponent = std::min<int>(exponent_value, exponent_error);
     int max_exponent = std::max<int>(exponent_value, exponent_error);
 	
     int precision = max_exponent - min_exponent + 1;
-	  double scale_value = pow(10., std::min(0, exponent_value - max_exponent));
-//	  std::stringstream value_string_stream;
-//    value_string_stream.precision(precision);
-//	  value_string_stream.setf( std::ios::fixed | std::ios::showpoint );
-//	  value_string_stream << (decimal_representation<double>(in_value) * scale_value);
-//    return value_string_stream.str();
 
-    return to_fixed_string(decimal_representation<double>(in_value) * scale_value, precision);
+	  double scale_value = pow(10., std::min(0, exponent_value - max_exponent));
+
+    //because precision may be larger than 1, can't call
+    //decimal_representation<double>(in_value, precision)
+    //[i.e. decimal_rep(in_value,precision) * scale_value, might be rounded by to_fixed_string]
+    if (exponent_value < exponent_error)
+    {
+      return to_fixed_string(two_digits_double(in_value)*scale_value, precision);
+    }
+    //
+    return to_fixed_string(decimal_representation<double>(in_value,precision)*scale_value,precision);
   }
 
   std::string
-  to_string_error(const double value, const double error)
+  to_string_error(const double in_value, const double in_error)
   {
-	  int exponent_value = exponent<double>(value);
-	  int exponent_error = exponent<double>(error);
+ 	  int exponent_value = exponent<double>(in_value);
+	  int exponent_error = exponent<double>(in_error);
 
-	  int min_exponent = std::min<int>(exponent_value, exponent_error);
-	  int max_exponent = std::max<int>(exponent_value, exponent_error);
+    //exponent is the same (no rounding worry)
+    if (exponent_value == exponent_error)
+    {
+      return to_fixed_string(decimal_representation<double>(in_error),1);
+    }
+
+    //if they are different (need to change the precision on the larger one)
+    // then exponent_value can drop by 1 (more precision means less likely
+    // to round up);
+    if (exponent_value > exponent_error)
+    {
+      //so if exponent_value is larger
+      exponent_value = exponent<double>(in_value,1+std::abs(exponent_error));
+    }
+    else if (exponent_value < exponent_error)
+    {
+      exponent_error = exponent<double>(in_error,1+std::abs(exponent_value));
+    }
+
+   	int min_exponent = std::min<int>(exponent_value, exponent_error);
+    int max_exponent = std::max<int>(exponent_value, exponent_error);
 	
 	  int precision = max_exponent - min_exponent + 1;
 
 	  double scale_error = pow(10., std::min(0, exponent_error - max_exponent));
+    if (exponent_error < exponent_value)
+    {
+      return to_fixed_string(two_digits_double(in_error)*scale_error, precision);
+    }
+    return to_fixed_string(decimal_representation<double>(in_error,precision)*scale_error,precision);
+  }
 
-    return to_fixed_string(decimal_representation<double>(error) * scale_error, precision);
-//	  std::stringstream error_string_stream;
-//	  error_string_stream << std::setprecision(precision) << std::setiosflags(std::ios::fixed | std::ios::showpoint);
-//	  error_string_stream << (decimal_representation<double>(error) * scale_error);		
+  int
+  get_exponent(const double in_value, const double in_error)
+  {
+    int exponent_value = exponent<double>(in_value);
+	  int exponent_error = exponent<double>(in_error);
+    //exponent is the same
+    if(exponent_value == exponent_error)
+    {
+      return exponent_value;
+    }
+    if (exponent_value > exponent_error)
+    {
+      //so if exponent_value is larger
+      exponent_value = exponent<double>(in_value,1 + std::abs(exponent_error));
+    }
+    else if (exponent_value < exponent_error)
+    {
+      exponent_error = exponent<double>(in_error,1 + std::abs(exponent_value));
+    }
+    return std::max<int>(exponent_value,exponent_error);
+  }
 
-//	  return error_string_stream.str();
+  int get_min_exponent(std::vector<double> in_vector)
+  {
+    if (in_vector.empty())
+    {
+      std::string in_function = __PRETTY_FUNCTION__;
+      throw std::runtime_error("exception in function " + in_function + "in " __FILE__ " " STRING__LINE__);
+    }
+
+    int min_exponent = exponent<double>(in_vector[0]);
+
+    for (auto& element : in_vector)
+    {
+      min_exponent = std::min(min_exponent, exponent<double>(element));
+    }
+
+    return min_exponent;
+  }
+
+  int get_max_exponent(std::vector<double> in_vector)
+  {
+    if (in_vector.empty())
+    {
+      std::string in_function = __PRETTY_FUNCTION__;
+      throw std::runtime_error("exception in function " + in_function + "in " __FILE__ " " STRING__LINE__);
+    }
+    int min_exponent = get_min_exponent(in_vector);
+    //(find minimum exponent; then find maximum exponent)
+    int max_exponent = min_exponent;
+    for (auto & element : in_vector)
+    {
+      max_exponent = std::max(max_exponent, exponent<double>(element,1+std::abs(min_exponent)));
+    }
+
+    return max_exponent;
   }
 
   std::string
@@ -54,11 +161,6 @@ namespace symmetric_error
    	int min_exponent = minimum_exponent(in_value,in_error);
 	  int precision = std::abs(min_exponent) + 1;
     return to_fixed_string(in_value, precision);
-//	  std::stringstream value_string_stream;
-//    value_string_stream.precision(precision);
-//	  value_string_stream.setf( std::ios::fixed | std::ios::showpoint );
-//	  value_string_stream << in_value;
-//    return value_string_stream.str();
   }
 
   std::string
@@ -67,16 +169,12 @@ namespace symmetric_error
    	int min_exponent = minimum_exponent(in_value,in_error);
 	  int precision = std::abs(min_exponent) + 1;
     return to_fixed_string(in_error, precision);
-//	  std::stringstream error_string_stream;
-//	  error_string_stream << std::setprecision(precision) << std::setiosflags(std::ios::fixed | std::ios::showpoint);
-//	  error_string_stream << (decimal_representation<double>(error) * scale_error);		
-//	  return error_string_stream.str();
   }
 
 
   //Name?
   std::tuple<std::string, std::vector<std::string>, int>
-  to_tuple_multi_errors(const double x, const std::vector<double>& in_vector_errors)
+  to_tuple_multi_errors(const double in_value, const std::vector<double>& in_vector_errors)
   {
 
     if (in_vector_errors.empty())
@@ -85,27 +183,20 @@ namespace symmetric_error
       throw std::runtime_error("exception in function " + in_function + "in " __FILE__ " " STRING__LINE__);
     }
 
-    int exponent_value   = exponent<double>(x);
-    int current_min_expo = exponent_value;
-    int current_max_expo = exponent_value;
+    std::vector<double> all_values = in_vector_errors;
+    all_values.push_back(in_value);
 
-    for (auto & error : in_vector_errors )
-    {
-      current_min_expo   = std::min(exponent<double>(error), current_min_expo);
-      current_max_expo   = std::max(exponent<double>(error), current_min_expo);
-    }
+    int current_min_expo = get_min_exponent(all_values);
+    int current_max_expo = get_max_exponent(all_values);
 
-    int precision = current_max_expo - current_min_expo + 1;
-    double scale_value = pow(10., std::min(0, exponent_value - current_max_expo));
-    std::string out_string = to_fixed_string(decimal_representation<double>(x) * scale_value, precision);
+    //create a dummy value to call against;
+    double dummy_value = 1.1 * pow(10., current_min_expo);
+    std::string out_string = to_string_value(in_value, dummy_value);
 
     std::vector<std::string> error_string;
-
     for ( auto & error : in_vector_errors )
     {
-  		int exponent_error = exponent<double>(error);
-      double scale_error = pow(10., std::min(0, exponent_error - current_max_expo));
-      std::string out_error_string = to_fixed_string(decimal_representation<double>(error) * scale_error, precision);
+      std::string out_error_string = to_string_value(error, dummy_value);
       error_string.push_back(out_error_string);
     }
     return std::tuple<std::string, std::vector<std::string>, int>(out_string, error_string, current_max_expo);
