@@ -19,10 +19,7 @@ public:
     o << file << ": " << line << "; " << arg;
     msg = o.str();
   }
-  ~file_line_runtime_error() throw()
-  {
-  }
-  const char *what() const throw()
+  const char *what() const noexcept
   {
     return msg.c_str();
   }

@@ -11,19 +11,19 @@
 
 #include "macro_definitions.hpp"
 
-extern double truncate_at(const double& in_value, int decimal_point);
-extern long double truncate_at(const long double& in_value, int decimal_point);
+double      truncate_at(const double& in_value, int decimal_point);
+long double truncate_at(const long double& in_value, int decimal_point);
 
-extern double round_at   (const double& in_value, int decimal_point);
-extern long double round_at (const long double& in_value, int decimal_point);
-extern float round_at(const float& in_value, int decimal_point);
+double      round_at (const double& in_value, int decimal_point);
+long double round_at (const long double& in_value, int decimal_point);
+float       round_at(const float& in_value, int decimal_point);
 
-extern int    maximum_exponent(const double value_1, const double value_2);
-extern int    minimum_exponent(const double value_1, const double value_2);
+int    maximum_exponent(const double value_1, const double value_2);
+int    minimum_exponent(const double value_1, const double value_2);
 
-extern std::string
+std::string
 to_string_max_exponent(const double value_1, const double value_2);
-extern std::string
+std::string
 to_string_min_exponent(const double value_1, const double value_2);
 
 template<typename T>
@@ -72,7 +72,7 @@ std::string to_fixed_string(const double & in_type, const int precision);
 
 template <typename T>
 inline
-std::string to_sci_string(const T & in_decimal, const int in_precision = 1) throw(std::runtime_error)
+std::string to_sci_string(const T & in_decimal, const int in_precision = 1) noexcept(false)
 {
   if (std::is_floating_point<T>::value && (boost::math::isinf(in_decimal) || boost::math::isnan(in_decimal)))
   {
@@ -88,7 +88,7 @@ std::string to_sci_string(const T & in_decimal, const int in_precision = 1) thro
 
 template <typename T>
 inline
-std::string to_sci_string_max_prec(const T & in_decimal) throw(std::runtime_error)
+std::string to_sci_string_max_prec(const T & in_decimal) noexcept(false)
 {
   if (std::is_floating_point<T>::value && (boost::math::isinf(in_decimal) || boost::math::isnan(in_decimal)) )
   {
@@ -103,7 +103,7 @@ std::string to_sci_string_max_prec(const T & in_decimal) throw(std::runtime_erro
 }
 
 //template <typename T>
-//inline int exponent(const T & in_value) throw(std::runtime_error)
+//inline int exponent(const T & in_value) noexcept(false)
 //{
 //  std::string exponential = to_sci_string<T>(in_value,1);
 //	std::string number = exponential.substr(exponential.find_last_of("Ee") + 1, std::string::npos);
