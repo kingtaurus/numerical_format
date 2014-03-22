@@ -4,35 +4,35 @@ setup_target_for_coverage(all_coverage all_checks results)
 
 add_executable(template_checks template_checks.cpp)
 set_target_properties(template_checks PROPERTIES COMPILE_DEFINITIONS "STAND_ALONE")
-target_link_libraries(template_checks gcov ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} mpfr gmp)
+target_link_libraries(template_checks gcov ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} mpfr gmp)
 
 add_executable(macro_checks    macro_checks.cpp)
 set_target_properties(macro_checks PROPERTIES COMPILE_DEFINITIONS "STAND_ALONE")
-target_link_libraries(macro_checks gcov ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+target_link_libraries(macro_checks gcov ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 
 add_executable(trucate_checks  truncate_and_round_checks.cpp)
 set_target_properties(trucate_checks PROPERTIES COMPILE_DEFINITIONS "STAND_ALONE")
-target_link_libraries(trucate_checks gcov ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} error_helper_def)
+target_link_libraries(trucate_checks gcov ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} error_helper_def)
 
 add_executable(to_fixed_checks  to_fixed_string_checks.cpp)
 set_target_properties(to_fixed_checks PROPERTIES COMPILE_DEFINITIONS "STAND_ALONE")
-target_link_libraries(to_fixed_checks gcov ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} error_helper_def)
+target_link_libraries(to_fixed_checks gcov ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} error_helper_def)
 
 add_executable(to_exponent_checks  to_exponent_checks.cpp)
 set_target_properties(to_exponent_checks PROPERTIES COMPILE_DEFINITIONS "STAND_ALONE")
-target_link_libraries(to_exponent_checks gcov ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} error_helper_def)
+target_link_libraries(to_exponent_checks gcov ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} error_helper_def)
 
 add_executable(symmetric_error_checks  symmetric_error_checks.cpp)
 set_target_properties(symmetric_error_checks PROPERTIES COMPILE_DEFINITIONS "STAND_ALONE")
-target_link_libraries(symmetric_error_checks gcov ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} error_helper_def symmetric_error )
+target_link_libraries(symmetric_error_checks gcov ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} error_helper_def symmetric_error )
 
 add_executable(multiple_errors_checks  multiple_errors_checks.cpp)
 set_target_properties(multiple_errors_checks PROPERTIES COMPILE_DEFINITIONS "STAND_ALONE")
-target_link_libraries(multiple_errors_checks gcov ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} symmetric_error error_helper_def)
+target_link_libraries(multiple_errors_checks gcov ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} symmetric_error error_helper_def)
 
 add_executable(stream_output_checks  stream_output_checks.cpp)
 set_target_properties(stream_output_checks PROPERTIES COMPILE_DEFINITIONS "STAND_ALONE")
-target_link_libraries(stream_output_checks gcov ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} stream_output_proxy-static symmetric_error error_helper_def stream_output_proxy)
+target_link_libraries(stream_output_checks gcov ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} stream_output_proxy symmetric_error error_helper_def)
 
 #${Boost_LIBRARIES}
 #${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_REGEX_LIBRARY}
@@ -40,7 +40,7 @@ target_link_libraries(stream_output_checks gcov ${Boost_FILESYSTEM_LIBRARY} ${Bo
 #add_definitions( -DBOOST_ALL_DYN_LINK )
 
 add_executable(all_checks all_tests.cpp template_checks.cpp macro_checks.cpp truncate_and_round_checks.cpp to_fixed_string_checks.cpp to_exponent_checks.cpp symmetric_error_checks.cpp multiple_errors_checks.cpp stream_output_checks.cpp)
-target_link_libraries(all_checks gcov ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} mpfr gmp error_helper_def symmetric_error type)
+target_link_libraries(all_checks gcov ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} mpfr gmp error_helper_def symmetric_error type)
 
 add_test(NAME template_test          COMMAND template_checks        --show_progress=yes --log_level=all)
 add_test(NAME macro_tests            COMMAND macro_checks           --show_progress=yes --log_level=all)
