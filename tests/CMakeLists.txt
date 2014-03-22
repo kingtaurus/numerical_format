@@ -32,7 +32,7 @@ target_link_libraries(multiple_errors_checks gcov ${Boost_FILESYSTEM_LIBRARY} ${
 
 add_executable(stream_output_checks  stream_output_checks.cpp)
 set_target_properties(stream_output_checks PROPERTIES COMPILE_DEFINITIONS "STAND_ALONE")
-target_link_libraries(stream_output_checks gcov ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} stream_output_proxy symmetric_error error_helper_def)
+target_link_libraries(stream_output_checks gcov ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} stream_output_proxy-static symmetric_error error_helper_def stream_output_proxy)
 
 #${Boost_LIBRARIES}
 #${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_REGEX_LIBRARY}
