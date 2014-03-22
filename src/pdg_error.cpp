@@ -117,7 +117,8 @@ namespace pdg_error
   }
 
   template <typename T>
-  std::string to_string_error_fixed(const T& in_value, const T& in_error)
+  std::string to_string_error_fixed(const T& in_value, //const T& in_value __attribute__((unused)),
+                                    const T& in_error)
   {
     UNUSED(in_value);
     double three_digit_error = three_digit_decimal_rep(in_error);

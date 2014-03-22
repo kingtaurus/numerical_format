@@ -1,4 +1,3 @@
-
 #include "error_helper_def.hpp"
 #include <cmath>
 
@@ -20,7 +19,7 @@ long double truncate_at(const long double& in_value, int decimal_point = 0 )
 
 float round_at(const float& in_value, int decimal_point = 0)
 {
-  return std::round(in_value * std::pow(10.,decimal_point)) * std::pow (10., -decimal_point);//
+  return std::round(in_value * std::pow(10.f,float(decimal_point))) * std::pow (10.f, -float(decimal_point));//
   //this takes a double: xyz.abcd -> shifts the decimal_point (if positive it makes the number larger)
   // so: round_at(xyz.abcd)    |-> xy|z|           , where |z| is rounded *if necessary*
   //     round_at(xyz.abcd,-1) |-> xy.zabc |-> x|y|, where |y| is rounded *if necessary*

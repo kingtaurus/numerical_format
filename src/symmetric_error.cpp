@@ -11,15 +11,6 @@ namespace symmetric_error
 
   std::string to_string_value(const double in_value, const double in_error)
   {
-//    bool in_value_larger = (std::abs(in_value) > std::abs(in_error)) ? true  : false;
-//    bool in_error_larger = (std::abs(in_error) > std::abs(in_value)) ? true  : false;
-//    bool value_error_equal = !in_value_larger && !in_error_larger;
-//    //unlikely to happen, but it should be checked
-//    // PROBABLY should replace this with a closeness check
-//    //
-//    //both evaluations need to be done (because its a 'weak ordering')
-//    //[i.e. if in_value == in_error]
-//    //
     int exponent_value = exponent<double>(in_value);
     int exponent_error = exponent<double>(in_error);
 
@@ -59,8 +50,7 @@ namespace symmetric_error
     return to_fixed_string(decimal_representation<double>(in_value,precision)*scale_value,precision);
   }
 
-  std::string
-  to_string_error(const double in_value, const double in_error)
+  std::string to_string_error(const double in_value, const double in_error)
   {
  	  int exponent_value = exponent<double>(in_value);
 	  int exponent_error = exponent<double>(in_error);
@@ -97,8 +87,7 @@ namespace symmetric_error
     return to_fixed_string(decimal_representation<double>(in_error,precision)*scale_error,precision);
   }
 
-  int
-  get_exponent(const double in_value, const double in_error)
+  int get_exponent(const double in_value, const double in_error)
   {
     int exponent_value = exponent<double>(in_value);
 	  int exponent_error = exponent<double>(in_error);
@@ -243,15 +232,16 @@ namespace symmetric_error
     {
       prec = std::abs(min_expo) + 1;
     }
-    size_t width_value_1 = to_fixed_string(value_1, prec).size();
-    size_t width_value_2 = to_fixed_string(value_2, prec).size();
+    int width_value_1 = int(to_fixed_string(value_1, prec).size());
+    int width_value_2 = int(to_fixed_string(value_2, prec).size());
 
-    size_t max_width     = std::max(width_value_1,width_value_2);
+    int max_width     = std::max(width_value_1,width_value_2);
 
     std::stringstream value_1_string_stream;
     std::stringstream value_2_string_stream;
 
     //right aligned, with fixed width (good for a column)
+    //surprised by this: std::setw(int) why?
     value_1_string_stream << std::setw(max_width) << std::setprecision(prec) << std::setiosflags(std::ios::right | std::ios::fixed | std::ios::showpoint);
 	    value_1_string_stream <<  value_1;
 
@@ -261,7 +251,8 @@ namespace symmetric_error
     return std::make_pair(value_1_string_stream.str(), value_2_string_stream.str());
   }
 
-
+  //probably should rename this
+  //behaviour is fixed point (so ... maybe rework this)
   std::vector<std::string>
   to_string_no_exponent(const std::vector<double>& vec)
   {
@@ -287,10 +278,10 @@ namespace symmetric_error
       prec = std::abs(min_expo) + 1;
     }
 
-    size_t max_width = 0;
+    int max_width = 0;
     for (auto & in : vec)
     {
-      max_width = std::max(max_width, to_fixed_string(in,prec).size()) ;
+      max_width = std::max(max_width, int(to_fixed_string(in,prec).size())) ;
     }
 
     std::vector<std::string> out_vector = {};
