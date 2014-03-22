@@ -10,13 +10,12 @@
 #include "file_line_exception.hpp"
 #include "error_helper_def.hpp"
 
-
-double infinity = std::numeric_limits<double>::infinity();
-
 BOOST_AUTO_TEST_SUITE( to_exponent_suite )
 
 BOOST_AUTO_TEST_CASE ( exponent_test )
 {
+  double infinity = std::numeric_limits<double>::infinity();
+
   BOOST_MESSAGE("Checking output of exponent<double>;");
 	BOOST_REQUIRE_EQUAL(exponent<double>(0.0000001), -7);
 	BOOST_REQUIRE_EQUAL(exponent<double>(0.000001), -6);
@@ -60,6 +59,9 @@ BOOST_AUTO_TEST_CASE ( exponent_test )
 
 BOOST_AUTO_TEST_CASE ( min_and_max_exponent_test )
 {
+
+  double infinity = std::numeric_limits<double>::infinity();
+
   BOOST_REQUIRE_EQUAL(to_string_max_exponent(0.0, 0.1), "0");
   BOOST_REQUIRE_EQUAL(to_string_max_exponent(0.1, 0.0), "0");
   BOOST_REQUIRE_EQUAL(to_string_max_exponent(0.1, 0.01),"-1");

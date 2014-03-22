@@ -185,9 +185,16 @@ BOOST_AUTO_TEST_CASE(check_error_throws_to_string_value_output_checks)
   BOOST_REQUIRE_EQUAL(to_string_value(1.1,0.01), "1.100");
   BOOST_REQUIRE_EQUAL(to_string_value(1.2,0.01), "1.200");
 
+  BOOST_REQUIRE_EQUAL(to_string_value(1.2,0.01), to_string_error(0.01,1.2));
+  BOOST_REQUIRE_EQUAL(to_string_value(0.01,1.2), to_string_error(1.2,0.01));
+
   BOOST_REQUIRE_EQUAL(to_string_value(10.0,0.01), "1.0000");
+  BOOST_REQUIRE_EQUAL(to_string_value(10.0,0.01), to_string_error(0.01,10.));
+
   BOOST_REQUIRE_EQUAL(to_string_value(11.1,0.01), "1.1100");
+  BOOST_REQUIRE_EQUAL(to_string_value(11.1,0.01), to_string_error(0.01,11.1));
   BOOST_REQUIRE_EQUAL(to_string_value(12.2,0.01), "1.2200");
+  BOOST_REQUIRE_EQUAL(to_string_value(12.2,0.01), to_string_error(0.01,12.2));
 
   BOOST_REQUIRE_EQUAL(to_string_error(1.0,0.01), "0.010");
   BOOST_REQUIRE_EQUAL(to_string_error(1.1,0.01), "0.010");
@@ -214,14 +221,29 @@ BOOST_AUTO_TEST_CASE(check_error_throws_to_string_value_output_checks)
 
   BOOST_REQUIRE_EQUAL(to_string_value(9.999,999.99), "0.010");
   BOOST_REQUIRE_EQUAL(to_string_error(9.999,999.99), "1.000");
-
 }
 
 
 BOOST_AUTO_TEST_CASE(check_to_string_exponent)
 {
   using namespace symmetric_error;
-  BOOST_REQUIRE_EQUAL(get_exponent(9.999,9.999),1);
+  BOOST_REQUIRE_EQUAL(get_exponent(9.999,9.999),    1);
+  //9.999 |->1.0 E 1
+  //9.999 |->1.0 E 1
+  BOOST_REQUIRE_EQUAL(get_exponent(9.999,0.999),    1);
+  //9.999 |-> 9.99 |-> 10.0
+  //0.999 |-> 1.0
+  BOOST_REQUIRE_EQUAL(get_exponent(9.9999,0.099),   1);
+  BOOST_REQUIRE_EQUAL(get_exponent(9.999,0.0999),  1);
+  BOOST_REQUIRE_EQUAL(get_exponent(9.999,0.099),    0);
+  //9.999 |->  9.999
+  //0.099 |->  0.099
+  BOOST_REQUIRE_EQUAL(get_exponent(9.999,     0.009),    0);
+  BOOST_REQUIRE_EQUAL(get_exponent(9.999,     0.0009),   0);
+  BOOST_REQUIRE_EQUAL(get_exponent(9.999,     0.00099),  0);
+  BOOST_REQUIRE_EQUAL(get_exponent(9.999,     0.000099), 0);
+  BOOST_REQUIRE_EQUAL(get_exponent(9.999,     0.0000099),0);
+  BOOST_REQUIRE_EQUAL(get_exponent(0.0000099, 9.999),0);//get_exponent is symmetric
 }
 
 
@@ -273,7 +295,6 @@ BOOST_AUTO_TEST_CASE(check_get_max_exponent)
   BOOST_REQUIRE_EQUAL(get_max_exponent({0.10, 0.01, 0.003, 0.003}),  -1);
   BOOST_REQUIRE_EQUAL(get_max_exponent({0.10, 0.01, 0.055, 0.0705}), -1);
   BOOST_REQUIRE_EQUAL(get_max_exponent({0.10, 99.01, 0.003, 0.0005}), 1);
-
 
 }
 
@@ -394,7 +415,7 @@ BOOST_AUTO_TEST_CASE(check_error_throws_value_to_string_multiple_errors)
   using namespace symmetric_error;
 
   BOOST_REQUIRE_THROW(value_to_string_multiple_errors(values.value_1,       {errors.error_inf}), std::runtime_error);
-  BOOST_REQUIRE_THROW(value_to_string_multiple_errors(values.value_inf,     {errors.error_1}), std::runtime_error);
+  BOOST_REQUIRE_THROW(value_to_string_multiple_errors(values.value_inf,     {errors.error_1}),   std::runtime_error);
   BOOST_REQUIRE_THROW(value_to_string_multiple_errors(values.value_1,       {errors.error_1, errors.error_inf}), std::runtime_error);
   BOOST_REQUIRE_THROW(value_to_string_multiple_errors(values.value_1,       {errors.error_1, errors.error_2, errors.error_inf}), std::runtime_error);
   BOOST_REQUIRE_THROW(value_to_string_multiple_errors(values.value_1,       {errors.error_1, errors.error_2, errors.error_3, errors.error_inf}), std::runtime_error);
@@ -487,6 +508,13 @@ BOOST_AUTO_TEST_CASE(check_error_throws_to_string_no_exponent_vector_parm)
   BOOST_REQUIRE_THROW(to_string_no_exponent({values.value_1,   errors.error_1,   errors.error_nan,   errors.error_2}),   std::runtime_error);
   BOOST_REQUIRE_THROW(to_string_no_exponent({values.value_1,   errors.error_nan,   errors.error_2,   errors.error_3}),   std::runtime_error);
   BOOST_REQUIRE_THROW(to_string_no_exponent({values.value_nan,   errors.error_1,   errors.error_2,   errors.error_3} ),  std::runtime_error);
+}
+
+BOOST_AUTO_TEST_CASE(full_string_output)
+{
+  using namespace symmetric_error;
+  std::cout << to_string_no_exponent({values.value_1, errors.error_1})[0] << std::endl;
+  std::cout << to_string_no_exponent({values.value_1, errors.error_4})[1] << std::endl;  
 }
 
 
