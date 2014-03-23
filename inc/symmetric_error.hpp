@@ -44,11 +44,6 @@ namespace symmetric_error
                         const double value_2,
                         const double value_3,
                         const double value_4);
-
-
-
-
-
 }
 
 #endif

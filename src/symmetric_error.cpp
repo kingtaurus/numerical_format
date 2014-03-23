@@ -8,7 +8,6 @@
 
 namespace symmetric_error
 {
-
   std::string to_string_value(const double in_value, const double in_error)
   {
     int exponent_value = exponent<double>(in_value);

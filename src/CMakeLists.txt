@@ -21,8 +21,7 @@ SET_TARGET_PROPERTIES( pdg_error-static PROPERTIES PREFIX      "lib")
 #SET( legacy_target ${CMAKE_INSTALL_PREFIX}/libIex-2_0.so.10.0.1)
 #ADD_CUSTOM_COMMAND( OUTPUT ${legacy_link}
 #                    COMMAND ln -s ${legacy_target} ${legacy_link}
-#                    DEPENDS install ${legacy_target} 
-#                    COMMENT "Generating legacy symbolic link")
+#                    DEPENDS install ${legacy_target}#                    COMMENT "Generating legacy symbolic link")
 #ADD_CUSTOM_TARGET( install_legacy DEPENDS ${legacy_link} )
 
 add_library( type                         SHARED type.cpp )
@@ -34,11 +33,6 @@ add_library( symmetric_error              SHARED symmetric_error.cpp)
 add_library( symmetric_error-static       STATIC symmetric_error.cpp)
 SET_TARGET_PROPERTIES( symmetric_error-static PROPERTIES OUTPUT_NAME "symmetric_error")
 SET_TARGET_PROPERTIES( symmetric_error-static PROPERTIES PREFIX      "lib")
-
-add_library( stream_output_proxy          SHARED stream_output_proxy.cpp)
-add_library( stream_output_proxy-static   STATIC stream_output_proxy.cpp)
-SET_TARGET_PROPERTIES( stream_output_proxy-static PROPERTIES OUTPUT_NAME "stream_output_proxy")
-SET_TARGET_PROPERTIES( stream_output_proxy-static PROPERTIES PREFIX      "lib")
 
 add_library( error_helper_def             SHARED error_helper_def.cpp)
 add_library( error_helper_def-static      STATIC error_helper_def.cpp)
@@ -52,14 +46,14 @@ SET_TARGET_PROPERTIES( error_helper_def-static PROPERTIES PREFIX      "lib")
 # # so we add a "lib" prefix (which is default on other platforms anyway):
 # SET_TARGET_PROPERTIES(foo-static PROPERTIES PREFIX "lib")
 
-add_library( pdg       SHARED pdg_error       type stream_output_proxy error_helper_def)
-add_library( symmetric SHARED symmetric_error type stream_output_proxy error_helper_def)
+add_library( pdg       SHARED pdg_error       type error_helper_def)
+add_library( symmetric SHARED symmetric_error type error_helper_def)
 
-add_library( pdg-static       STATIC pdg_error.cpp       type.cpp stream_output_proxy.cpp error_helper_def.cpp)
+add_library( pdg-static       STATIC pdg_error.cpp       type.cpp error_helper_def.cpp)
 SET_TARGET_PROPERTIES( pdg-static PROPERTIES OUTPUT_NAME "pdg")
 SET_TARGET_PROPERTIES( pdg-static PROPERTIES PREFIX      "lib")
 
-add_library( symmetric-static STATIC symmetric_error.cpp type.cpp stream_output_proxy.cpp error_helper_def.cpp)
+add_library( symmetric-static STATIC symmetric_error.cpp type.cpp error_helper_def.cpp)
 SET_TARGET_PROPERTIES( symmetric-static PROPERTIES OUTPUT_NAME "symmetric")
 SET_TARGET_PROPERTIES( symmetric-static PROPERTIES PREFIX      "lib")
 
@@ -96,8 +90,7 @@ SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/copyright")
 SET(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Greg King <greg.james.king@gmail.com>") #required
 SET(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/kingtaurus/numerical_format")
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY 
-"Numerical Error Format.\n Provides pdg and symmetric formatting of a central value and its associated\n error. Further numerical output can be formatted using LaTeX or terminal\n decoration.")
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY"Numerical Error Format.\n Provides pdg and symmetric formatting of a central value and its associated\n error. Further numerical output can be formatted using LaTeX or terminal\n decoration.")
 SET(CPACK_PACKAGE_VERSION_MAJOR "${${PROJECT_NAME}_VERSION_MAJOR}")
 SET(CPACK_PACKAGE_VERSION_MINOR "${${PROJECT_NAME}_VERSION_MINOR}")
 SET(CPACK_PACKAGE_VERSION_PATCH "0")
@@ -152,13 +145,11 @@ install(
      ARCHIVE DESTINATION lib COMPONENT pdg
 )
 
-install( 
-     TARGETS pdg_error type symmetric_error stream_output_proxy error_helper_def
+install(     TARGETS pdg_error type symmetric_error error_helper_def
      LIBRARY DESTINATION lib COMPONENT pdg
 )
 
-install( 
-     TARGETS pdg_error-static type-static symmetric_error-static stream_output_proxy-static error_helper_def-static
+install(     TARGETS pdg_error-static type-static symmetric_error-static error_helper_def-static
      ARCHIVE DESTINATION lib COMPONENT pdg
 )
 
@@ -190,8 +181,7 @@ set(CPACK_WARN_ON_ABSOLUTE_INSTALL_DESTINATION TRUE)
 
 INCLUDE(CPack)
 
-#gking@bender:~/Programming/C++/stream_errors/build/Release$ lintian -I libnumeric-error-format-dev-0.1.0-Linux.deb 
-#W: libnumeric-error-format-dev: package-name-doesnt-match-sonames liberror-helper-def libpdg libpdg-error libstream-output-proxy libsymmetric libsymmetric-error libtype
+#gking@bender:~/Programming/C++/stream_errors/build/Release$ lintian -I libnumeric-error-format-dev-0.1.0-Linux.deb#W: libnumeric-error-format-dev: package-name-doesnt-match-sonames liberror-helper-def libpdg libpdg-error libstream-output-proxy libsymmetric libsymmetric-error libtype
 #I: libnumeric-error-format-dev: binary-has-unneeded-section usr/lib/liberror_helper_def.so .comment
 #I: libnumeric-error-format-dev: binary-has-unneeded-section usr/lib/libpdg.so .comment
 #I: libnumeric-error-format-dev: binary-has-unneeded-section usr/lib/libpdg_error.so .comment
