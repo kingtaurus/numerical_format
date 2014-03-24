@@ -1,7 +1,4 @@
 
-
-setup_target_for_coverage(all_coverage all_checks results)
-
 add_executable(template_checks template_checks.cpp)
 set_target_properties(template_checks PROPERTIES COMPILE_DEFINITIONS "STAND_ALONE")
 target_link_libraries(template_checks gcov ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY} mpfr gmp)
@@ -51,6 +48,8 @@ add_test(NAME symmetric_error_tests  COMMAND symmetric_error_checks --show_progr
 add_test(NAME multiple_error_tests   COMMAND multiple_errors_checks --show_progress=yes --log_level=all)
 add_test(NAME stream_output_tests    COMMAND stream_output_checks   --show_progress=yes --log_level=all)
 add_test(NAME all_tests              COMMAND all_checks             --show_progress=yes --log_level=all)
+
+setup_target_for_coverage(all_coverage all_checks results)
 
 #execute_process(COMMAND dir RESULT_VARIABLE rv)
 #message("rv='${rv}'")
